@@ -23,5 +23,5 @@ setup(
         "reportlab==4.0.9",
         "Pillow==10.2.0",
     ],
-    python_requires=">=3.10.10,<3.11",
+    python_requires=">=3.10.9,<3.11",
 ) 

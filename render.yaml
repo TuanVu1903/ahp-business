@@ -10,7 +10,7 @@ services:
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.10
+        value: 3.10.9
       - key: PORT
         value: 8000
       - key: MONGODB_URI
