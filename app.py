@@ -179,7 +179,7 @@ def get_llm_suggestions(goal, file_content=None):
             API_URL,
             headers=headers,
             json={
-                "model": "llama-3.3-70b-versatile",  # Groq model
+                "model": "llama-3.1-8b-instant",  # Groq model
                 "messages": [
                     {"role": "system", "content": "Bạn là một chuyên gia phân tích và tư vấn ra quyết định. Hãy phân tích mục tiêu và đề xuất 4 tiêu chí đánh giá quan trọng nhất và 4 phương án thay thế phù hợp nhất."},
                     {"role": "user", "content": prompt}
@@ -382,7 +382,7 @@ QUAN TRỌNG:
                 API_URL,
                 headers=headers,
                 json={
-                    "model": "llama-3.3-70b-versatile",
+                    "model": "llama-3.1-8b-instant",
                     "messages": [
                         {"role": "system", "content": "Bạn là chuyên gia AHP có kinh nghiệm về ma trận so sánh và đảm bảo tính nhất quán."},
                         {"role": "user", "content": prompt}
@@ -617,7 +617,7 @@ QUAN TRỌNG:
                 API_URL,
                 headers=headers,
                 json={
-                    "model": "llama-3.3-70b-versatile",
+                    "model": "llama-3.1-8b-instant",
                     "messages": [
                         {"role": "system", "content": "Bạn là một chuyên gia AHP với kinh nghiệm phân tích và so sánh phương án."},
                         {"role": "user", "content": prompt}
