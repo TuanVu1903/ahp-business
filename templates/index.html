@@ -6,7 +6,9 @@
     <title>Nhóm 7: Ứng Dụng LLM để hỗ trợ ra quyết định quan trọng của doanh nghiệp</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <style>
         /* Color Palette System - Professional, Scientific UI */
         :root {
@@ -4208,9 +4210,28 @@
                     calculateCriteriaWeights();
                     
                     // Hiển thị thông báo thành công
-                    setTimeout(() => {
-                        alert(`🎉 Ma trận đã được AI tạo thành công!\\n\\n📊 CR = ${result.cr.toFixed(4)} (< 0.1 - Nhất quán)\\n✅ Các ô được highlight màu tím là do AI điền\\n🔄 Bạn có thể chỉnh sửa các giá trị nếu cần\\n\\n➡️ Nhấn "Tiếp tục" để so sánh phương án!`);
-                    }, 500);
+                    Swal.fire({
+                        title: '🎉 Ma trận đã được AI tạo thành công!',
+                        html: `
+                            <div class="text-left">
+                                <p class="mb-2"><strong>📊 Độ nhất quán (CR):</strong> ${result.cr.toFixed(4)} <span class="text-success">(< 0.1 - Đạt yêu cầu)</span></p>
+                                <p class="mb-2"><strong>✅ Ghi chú:</strong></p>
+                                <ul class="text-left pl-4">
+                                    <li>Các ô có màu tím là do AI điền</li>
+                                    <li>Bạn có thể chỉnh sửa các giá trị nếu cần</li>
+                                </ul>
+                            </div>
+                        `,
+                        icon: 'success',
+                        confirmButtonText: 'Tiếp tục so sánh phương án',
+                        confirmButtonColor: '#4CAF50',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    });
                     
                 } else {
                     alert('Lỗi: ' + result.error);
@@ -4285,7 +4306,19 @@
                     setupAlternativeComparisons();
                     
                     // Hiển thị thông báo thành công
-                    alert('AI đã tạo thành công toàn bộ ma trận AHP!\\nTất cả ma trận đều có CR < 0.1 (nhất quán).\\nBạn có thể xem và chỉnh sửa các ma trận nếu cần.');
+                    Swal.fire({
+                        title: '🎉 AI đã tạo thành công toàn bộ ma trận AHP!',
+                        text: 'Tất cả ma trận đều có CR < 0.1 (nhất quán). Bạn có thể xem và chỉnh sửa các ma trận nếu cần.',
+                        icon: 'success',
+                        confirmButtonText: 'Tiếp tục',
+                        confirmButtonColor: '#4CAF50',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    });
                     
                 } else {
                     alert('Lỗi: ' + result.error);
@@ -4423,9 +4456,29 @@
                     calculateMatrixWeights(criterion);
 
                     // Hiển thị thông báo thành công
-                    setTimeout(() => {
-                        alert(`✅ AI đã điền ma trận "${criterion}" thành công!\nCR = ${result.cr.toFixed(4)} (< 0.1 - Nhất quán)\n\n🎯 Các ô được AI điền có màu tím. Bạn có thể chỉnh sửa nếu cần.\n\n📊 AI đã phân tích thông số thực tế của các phương án để tạo ma trận có ý nghĩa, không phải toàn bộ bằng 1.`);
-                    }, 1000);
+                                         Swal.fire({
+                         title: `✅ AI đã điền ma trận "${criterion}" thành công!`,
+                         html: `
+                             <div class="text-left">
+                                 <p class="mb-2"><strong>📊 Độ nhất quán (CR):</strong> ${result.cr.toFixed(4)} <span class="text-success">(< 0.1 - Đạt yêu cầu)</span></p>
+                                 <p class="mb-2"><strong>✅ Ghi chú:</strong></p>
+                                 <ul class="text-left pl-4">
+                                     <li>🎯 Các ô có màu tím là do AI điền</li>
+                                     <li>📝 Bạn có thể chỉnh sửa các giá trị nếu cần</li>
+                                     <li>📊 AI đã phân tích thông số thực tế để tạo ma trận có ý nghĩa</li>
+                                 </ul>
+                             </div>
+                         `,
+                         icon: 'success',
+                         confirmButtonText: 'Tiếp tục',
+                         confirmButtonColor: '#4CAF50',
+                         showClass: {
+                             popup: 'animate__animated animate__fadeInDown'
+                         },
+                         hideClass: {
+                             popup: 'animate__animated animate__fadeOutUp'
+                         }
+                     });
                 } else {
                     alert('❌ Lỗi: ' + (result.error || 'Không thể tạo ma trận AI'));
                 }
@@ -4518,7 +4571,19 @@
                     }, 1000);
                     
                     // Hiển thị thông báo thành công
-                    alert(`🎉 AI đã tạo thành công phân tích AHP hoàn chỉnh!\\n\\n📊 Tiêu chí: ${result.criteria.join(', ')}\\n🎯 Phương án: ${result.alternatives.join(', ')}\\n\\n✅ Tất cả ma trận đều có CR < 0.1 (nhất quán)\\n🏆 Kết quả đã sẵn sàng để xem và xuất báo cáo!`);
+                    Swal.fire({
+                        title: '🎉 AI đã tạo thành công phân tích AHP hoàn chỉnh!',
+                        text: `📊 Tiêu chí: ${result.criteria.join(', ')}\n🎯 Phương án: ${result.alternatives.join(', ')}\n\n✅ Tất cả ma trận đều có CR < 0.1 (nhất quán)\n🏆 Kết quả đã sẵn sàng để xem và xuất báo cáo!`,
+                        icon: 'success',
+                        confirmButtonText: 'Tiếp tục',
+                        confirmButtonColor: '#4CAF50',
+                        showClass: {
+                            popup: 'animate__animated animate__fadeInDown'
+                        },
+                        hideClass: {
+                            popup: 'animate__animated animate__fadeOutUp'
+                        }
+                    });
                     
                 } else {
                     alert('Lỗi: ' + result.error);
