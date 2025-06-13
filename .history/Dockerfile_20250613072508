@@ -11,9 +11,6 @@ RUN apt-get update && apt-get install -y \
     software-properties-common \
     && rm -rf /var/lib/apt/lists/*
 
-# Tạo user không phải root để chạy ứng dụng
-RUN useradd -m -u 1000 appuser
-
 # Copy requirements.txt và cài đặt các dependencies Python
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
@@ -21,19 +18,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy toàn bộ code vào container
 COPY . .
 
-# Tạo và cấp quyền cho các thư mục cần thiết
-RUN mkdir -p /app/static/uploads /app/static/temp && \
-    chown -R appuser:appuser /app
-
 # Thiết lập biến môi trường mặc định
 ENV PORT=5000
-ENV PYTHONUNBUFFERED=1
 
 # Expose port
 EXPOSE 5000
-
-# Chuyển sang user không phải root
-USER appuser
 
 # Chạy ứng dụng với Gunicorn
 CMD python -m gunicorn app:app --config gunicorn_config.py 

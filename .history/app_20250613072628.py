@@ -74,6 +74,28 @@ def log_to_mongodb(data):
         logger.debug(f"Successfully logged to MongoDB: {data}")
     except Exception as e:
         logger.error(f"Failed to log to MongoDB: {str(e)}")
+# Kết nối MongoDB
+try:
+    mongo_client = MongoClient('mongodb://localhost:27017/')
+    db = mongo_client['ahp']
+    logs_collection = db['logs']
+    print("MongoDB connected successfully!")
+except Exception as e:
+    print(f"MongoDB connection error: {str(e)}")
+    logs_collection = None
+
+# Hàm ghi log vào MongoDB
+def log_to_mongodb(data):
+    try:
+        if logs_collection is not None:
+            # Thêm timestamp
+            data['timestamp'] = datetime.now()
+            # Thêm vào collection
+            logs_collection.insert_one(data)
+            return True
+    except Exception as e:
+        print(f"MongoDB log error: {str(e)}")
+    return False
 
 # Cấu hình API cho Groq
 API_URL = os.getenv('API_URL', "https://api.groq.com/openai/v1/chat/completions")
@@ -833,38 +855,20 @@ def logout():
 @app.route('/health')
 def health_check():
     """Health check endpoint for Railway"""
-    try:
-        # Kiểm tra kết nối MongoDB nếu được cấu hình
-        if mongodb_client:
-            mongodb_client.admin.command('ping')
-        
-        return jsonify({
-            "status": "healthy",
-            "mongodb": "connected" if mongodb_client else "disabled"
-        }), 200
-    except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
-        return jsonify({
-            "status": "unhealthy",
-            "error": str(e)
-        }), 500
+    return jsonify({"status": "healthy"}), 200
 
 @app.route('/')
 def index():
     """Trang chính - yêu cầu đăng nhập"""
-    try:
-        # Cho phép health check bỏ qua đăng nhập
-        if request.headers.get('User-Agent', '').startswith('Railway'):
-            return jsonify({"status": "healthy"}), 200
-            
-        # Kiểm tra đăng nhập cho các request thông thường
-        if not session.get('logged_in'):
-            return redirect(url_for('login'))
+    # Cho phép health check bỏ qua đăng nhập
+    if request.headers.get('User-Agent', '').startswith('Railway'):
+        return jsonify({"status": "healthy"}), 200
         
-        return render_template('index.html', username=session.get('username', 'Người dùng'))
-    except Exception as e:
-        logger.error(f"Error in index route: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+    # Kiểm tra đăng nhập cho các request thông thường
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    
+    return render_template('index.html', username=session.get('username', 'Người dùng'))
 
 @app.route('/generate_criteria_matrix', methods=['POST'])
 def generate_criteria_matrix():

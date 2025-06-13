@@ -844,65 +844,6 @@ def health_check():
         }), 200
     except Exception as e:
         logger.error(f"Health check failed: {str(e)}")
-        return jsonify({
-            "status": "unhealthy",
-            "error": str(e)
-        }), 500
-
-@app.route('/')
-def index():
-    """Trang chính - yêu cầu đăng nhập"""
-    try:
-        # Cho phép health check bỏ qua đăng nhập
-        if request.headers.get('User-Agent', '').startswith('Railway'):
-            return jsonify({"status": "healthy"}), 200
-            
-        # Kiểm tra đăng nhập cho các request thông thường
-        if not session.get('logged_in'):
-            return redirect(url_for('login'))
-        
-        return render_template('index.html', username=session.get('username', 'Người dùng'))
-    except Exception as e:
-        logger.error(f"Error in index route: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/generate_criteria_matrix', methods=['POST'])
-def generate_criteria_matrix():
-    """Tự động tạo ma trận so sánh tiêu chí bằng AI"""
-    try:
-        data = request.json
-        goal = data.get('goal', '')
-        criteria = data.get('criteria', [])
-        
-        if not goal or not criteria:
-            return jsonify({"error": "Thiếu mục tiêu hoặc tiêu chí"}), 400
-        
-        if len(criteria) < 2:
-            return jsonify({"error": "Cần ít nhất 2 tiêu chí để so sánh"}), 400
-        
-        # Gọi AI để tạo ma trận
-        matrix_result = generate_criteria_matrix_ai(goal, criteria)
-        
-        # Log vào MongoDB
-        log_to_mongodb({
-            'type': 'generate_criteria_matrix',
-            'goal': goal,
-            'criteria': criteria,
-            'matrix_result': matrix_result
-        })
-        
-        return jsonify({
-            "success": True,
-            "matrix": matrix_result["matrix"],
-            "weights": matrix_result["weights"],
-            "cr": matrix_result["cr"],
-            "lambda_max": matrix_result["lambda_max"],
-            "is_consistent": matrix_result["is_consistent"],
-            "attempt": matrix_result["attempt"],
-            "message": f"Ma trận được tạo thành công với CR = {matrix_result['cr']:.4f}"
-        })
-        
-    except Exception as e:
         print(f"Error in generate_criteria_matrix: {str(e)}")
         return jsonify({"error": f"Lỗi tạo ma trận: {str(e)}"}), 500
 
