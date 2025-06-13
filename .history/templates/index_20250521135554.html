@@ -1,0 +1,3270 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhóm 7: Ứng Dụng LLM để hỗ trợ ra quyết định quan trọng của doanh nghiệp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Color Palette System - Professional, Scientific UI */
+        :root {
+            /* Primary Colors - Main UI (60%) */
+            --primary-50: #eef2ff;
+            --primary-100: #e0e7ff;
+            --primary-200: #c7d2fe;
+            --primary-300: #a5b4fc;
+            --primary-400: #818cf8;
+            --primary-500: #6366f1; /* Main Brand Color */
+            --primary-600: #4f46e5;
+            --primary-700: #4338ca;
+            --primary-800: #3730a3;
+            --primary-900: #312e81;
+            --primary-950: #1e1b4b;
+            
+            /* Secondary Colors - Supporting Elements (30%) */
+            --secondary-50: #f0f9ff;
+            --secondary-100: #e0f2fe;
+            --secondary-200: #bae6fd;
+            --secondary-300: #7dd3fc;
+            --secondary-400: #38bdf8;
+            --secondary-500: #0ea5e9;
+            --secondary-600: #0284c7;
+            --secondary-700: #0369a1;
+            --secondary-800: #075985;
+            --secondary-900: #0c4a6e;
+            --secondary-950: #082f49;
+            
+            /* Accent Colors - Highlights (10%) */
+            --accent-50: #ecfdf5;
+            --accent-100: #d1fae5;
+            --accent-200: #a7f3d0;
+            --accent-300: #6ee7b7;
+            --accent-400: #34d399;
+            --accent-500: #10b981;
+            --accent-600: #059669;
+            --accent-700: #047857;
+            --accent-800: #065f46;
+            --accent-900: #064e3b;
+            --accent-950: #022c22;
+            
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Neutral Colors - Text, Backgrounds */
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-300: #d1d5db;
+            --neutral-400: #9ca3af;
+            --neutral-500: #6b7280;
+            --neutral-600: #4b5563;
+            --neutral-700: #374151;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+            --neutral-950: #030712;
+            
+            /* Component Colors */
+            --bg-body: var(--neutral-50);
+            --bg-card: white;
+            --bg-sidebar: white;
+            --bg-navbar: white;
+            --bg-button: var(--primary-600);
+            --bg-button-hover: var(--primary-700);
+            --bg-input: white;
+            --bg-tooltip: var(--neutral-800);
+            
+            --text-primary: var(--neutral-900);
+            --text-secondary: var(--neutral-700);
+            --text-tertiary: var(--neutral-500);
+            --text-on-dark: white;
+            --text-muted: var(--neutral-400);
+            
+            --border-color: var(--neutral-200);
+            --border-color-focus: var(--primary-500);
+            
+            /* Drop Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Spacing Variables */
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-5: 1.25rem;
+            --spacing-6: 1.5rem;
+            --spacing-8: 2rem;
+            --spacing-10: 2.5rem;
+            --spacing-12: 3rem;
+            
+            /* Fonts */
+            --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            
+            /* Border Radius */
+            --radius-sm: 0.125rem;
+            --radius: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
+            --radius-2xl: 1rem;
+            --radius-3xl: 1.5rem;
+            --radius-full: 9999px;
+        }
+        
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-slide-in {
+            animation: slideInRight 0.5s ease-out forwards;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+            background-color: var(--bg-body);
+            line-height: 1.5;
+        }
+        
+        /* Professional Header Styles */
+        .site-header {
+            background: linear-gradient(135deg, var(--primary-700), var(--primary-900));
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background-color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            color: var(--primary-700);
+            font-weight: bold;
+            font-size: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-text h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-text p {
+            margin: 0;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .header-nav ul {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            transition: all 0.2s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .header-nav a:hover {
+            opacity: 1;
+        }
+
+        .header-nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s;
+        }
+
+        .header-nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Professional Footer Styles */
+        .site-footer {
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-section a {
+            color: var(--neutral-400);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-section p {
+            margin-top: 0;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: var(--neutral-800);
+            color: var(--neutral-300);
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-600);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--neutral-800);
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--neutral-500);
+        }
+
+        /* AHP Process Visualization */
+        .ahp-process {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .ahp-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .ahp-steps::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neutral-200);
+            z-index: 0;
+        }
+
+        .ahp-step {
+            width: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ahp-step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .ahp-step.active .ahp-step-circle {
+            background-color: var(--primary-500);
+            border-color: var(--primary-500);
+            color: white;
+            box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.2);
+        }
+
+        .ahp-step.completed .ahp-step-circle {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .ahp-step-name {
+            font-size: 0.75rem;
+            text-align: center;
+            color: var(--neutral-500);
+        }
+
+        .ahp-step.active .ahp-step-name {
+            color: var(--primary-700);
+            font-weight: 500;
+        }
+
+        .ahp-step.completed .ahp-step-name {
+            color: var(--success);
+        }
+
+        /* Enhanced Matrix Visualization */
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .matrix-table:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .matrix-table th, .matrix-table td {
+            border: 1px solid var(--neutral-200);
+            padding: 0.75rem 1rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .matrix-table th {
+            background-color: var(--primary-50);
+            font-weight: 600;
+            color: var(--primary-700);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .matrix-table th::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: var(--primary-400);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+        
+        .matrix-table th:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .matrix-table tr:nth-child(even) td {
+            background-color: var(--neutral-50);
+        }
+        
+        .matrix-table tr:hover td {
+            background-color: var(--primary-50);
+        }
+        
+        .matrix-comparison-value {
+            font-weight: 500;
+            color: var(--primary-700);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .matrix-comparison-value::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background-color: var(--primary-500);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .matrix-comparison-value:hover::after {
+            transform: scaleX(1);
+        }
+
+        .matrix-comparison-value:hover {
+            background-color: var(--primary-100) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Criterion tabs styling */
+        .criterion-tab {
+            transition: all 0.3s ease;
+            border-width: 1px;
+            border-color: var(--neutral-200);
+            font-weight: 500;
+        }
+
+        .criterion-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Alternative weights visualizations */
+        .alt-weight-bar {
+            height: 24px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-700));
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alt-weight-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255,255,255,0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 20px 20px;
+            animation: animate-stripes 2s linear infinite;
+        }
+
+        @keyframes animate-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+
+        /* Tabs */
+        .tab-button {
+            padding: 0.625rem 1rem;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: var(--neutral-100);
+            color: var(--text-secondary);
+            margin-right: 0.25rem;
+            border: 1px solid transparent;
+        }
+        
+        .tab-button:hover {
+            background-color: var(--neutral-200);
+        }
+        
+        .tab-button.active {
+            background-color: white;
+            color: var(--primary-700);
+            border-color: var(--border-color);
+            border-bottom-color: white;
+            margin-bottom: -1px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: var(--spacing-6);
+            border: 1px solid var(--border-color);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+            background-color: white;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Saaty Value Selectors */
+        .saaty-value-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+        
+        .saaty-value-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 85px;
+            transition: all 0.3s;
+        }
+        
+        .saaty-value-group:hover {
+            transform: translateY(-3px);
+        }
+        
+        .saaty-value-btn, .alt-saaty-value-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--neutral-300);
+            background-color: white;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .saaty-value-btn::before, .alt-saaty-value-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .saaty-value-btn:hover::before, .alt-saaty-value-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .saaty-value-btn:hover, .alt-saaty-value-btn:hover {
+            border-color: var(--primary-500);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .saaty-value-btn.active, .alt-saaty-value-btn.active {
+            background-color: var(--primary-600);
+            color: white;
+            border-color: var(--primary-600);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        
+        .saaty-value-label {
+            font-size: 0.7rem;
+            text-align: center;
+            line-height: 1.2;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        
+        .saaty-value-group:hover .saaty-value-label {
+            color: var(--primary-700);
+        }
+        
+        /* Comparison Value */
+        .comparison-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--primary-700);
+            position: relative;
+        }
+        
+        .comparison-value::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-200), var(--primary-500), var(--primary-200));
+            border-radius: 2px;
+        }
+        
+        /* Results Section */
+        #finalResultsSection {
+            background-color: var(--neutral-50);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-6);
+            border: 1px solid var(--primary-100);
+        }
+        
+        .result-box {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-5);
+            margin-bottom: var(--spacing-4);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .result-box:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: var(--radius-full);
+            line-height: 1;
+        }
+        
+        .badge-success {
+            background-color: var(--accent-100);
+            color: var(--accent-800);
+        }
+        
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .badge-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        .progress-steps::before {
+            content: "";
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--neutral-200);
+            z-index: 0;
+        }
+        
+        .step {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background-color: white;
+            border: 4px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-circle {
+            border-color: var(--primary-600);
+            background-color: var(--primary-600);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.25);
+        }
+        
+        .step.completed .step-circle {
+            border-color: var(--accent-600);
+            background-color: var(--accent-600);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            max-width: 120px;
+            color: var(--text-secondary);
+        }
+        
+        .step.active .step-label {
+            color: var(--primary-700);
+            font-weight: 600;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Form Fields */
+        .form-group {
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-2);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-500);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-text {
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* File Upload Zone */
+        .file-drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-6);
+            text-align: center;
+            background-color: var(--neutral-50);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .file-drop-zone:hover {
+            border-color: var(--primary-400);
+            background-color: var(--primary-50);
+        }
+        
+        .file-drop-zone.drag-active {
+            border-color: var(--primary-500);
+            background-color: var(--primary-50);
+        }
+        
+        /* Loading Spinners */
+        .spinner {
+            border: 4px solid rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-600);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .matrix-cell-highlight {
+            background-color: rgba(99, 102, 241, 0.2) !important;
+            border: 2px solid var(--primary-500) !important;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .matrix-comparison-value:hover {
+            background-color: var(--primary-100) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff', 
+                            200: '#c7d2fe',
+                            300: '#a5b4fc', 
+                            400: '#818cf8',
+                            500: '#6366f1', 
+                            600: '#4f46e5',
+                            700: '#4338ca', 
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        },
+                        secondary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe', 
+                            200: '#bae6fd',
+                            300: '#7dd3fc', 
+                            400: '#38bdf8',
+                            500: '#0ea5e9', 
+                            600: '#0284c7',
+                            700: '#0369a1', 
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                        accent: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5', 
+                            200: '#a7f3d0',
+                            300: '#6ee7b7', 
+                            400: '#34d399',
+                            500: '#10b981', 
+                            600: '#059669',
+                            700: '#047857', 
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        card: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Professional Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>AHP Decision System</h1>
+                    <p>Hỗ trợ ra quyết định chuyên nghiệp</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-home mr-1"></i> Trang chủ</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle mr-1"></i> Giới thiệu</a></li>
+                    <li><a href="#"><i class="fas fa-book mr-1"></i> Hướng dẫn</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle mr-1"></i> Hỗ trợ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- AHP Process Visualization -->
+    <div class="container mx-auto px-4 pt-6">
+        <div class="ahp-process animate-fade-in">
+            <h2 class="text-xl font-semibold mb-4 text-center">Quy trình phân tích thứ bậc (AHP)</h2>
+            <div class="ahp-steps">
+                <div class="ahp-step active" id="processStep1">
+                    <div class="ahp-step-circle">1</div>
+                    <div class="ahp-step-name">Xác định<br>vấn đề</div>
+                </div>
+                <div class="ahp-step" id="processStep2">
+                    <div class="ahp-step-circle">2</div>
+                    <div class="ahp-step-name">Chọn tiêu chí<br>& phương án</div>
+                </div>
+                <div class="ahp-step" id="processStep3">
+                    <div class="ahp-step-circle">3</div>
+                    <div class="ahp-step-name">So sánh<br>tiêu chí</div>
+                </div>
+                <div class="ahp-step" id="processStep4">
+                    <div class="ahp-step-circle">4</div>
+                    <div class="ahp-step-name">So sánh<br>phương án</div>
+                </div>
+                <div class="ahp-step" id="processStep5">
+                    <div class="ahp-step-circle">5</div>
+                    <div class="ahp-step-name">Kết quả<br>tổng hợp</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+        <h1 class="text-3xl font-bold text-center text-blue-600 mb-8">Phương pháp ra quyết định AHP</h1>
+        
+        <div id="step1" class="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 class="text-xl font-semibold mb-4">Bước 1: Nhập mục tiêu và thông tin</h2>
+            
+            <form id="goalForm" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label for="goal" class="block font-medium mb-1">Mục tiêu quyết định <span class="text-red-500">*</span></label>
+                    <input type="text" id="goal" name="goal" class="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="VD: Chọn địa điểm du lịch tốt nhất" required>
+                    <p class="text-sm text-gray-500 mt-1">Mô tả rõ mục tiêu quyết định của bạn</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block font-medium mb-1">Tải lên file hỗ trợ (tùy chọn)</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center cursor-pointer hover:bg-gray-50" onclick="document.getElementById('fileInput').click()">
+                        <p id="dragDropText" class="text-gray-500"><span class="font-semibold">Chọn file</span> hoặc kéo và thả</p>
+                        <p class="text-sm text-gray-400 mt-1">Chỉ hỗ trợ file .docx (tối đa 10MB)</p>
+                        <input type="file" id="fileInput" name="file" class="hidden" accept=".docx" onchange="handleFileChange()">
+                    </div>
+                    
+                    <div id="fileInfo" class="file-info-container mt-2 hidden">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p id="fileName" class="font-medium"></p>
+                                <p id="fileSize" class="text-sm text-gray-500"></p>
+                            </div>
+                            <button type="button" class="text-red-500 hover:text-red-700" onclick="removeFile()">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                </svg>
+                </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" onclick="submitForm()" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 00-1 1v5H4a1 1 0 100 2h5v5a1 1 0 102 0v-5h5a1 1 0 100-2h-5V4a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                    Phân tích và đề xuất
+                </button>
+            </form>
+            
+            <div id="processingStatus" class="mt-4 p-3 bg-blue-50 rounded-md border border-blue-200 hidden">
+                <p id="statusText" class="font-medium text-blue-700"></p>
+                <p id="statusDetails" class="text-sm text-blue-600 mt-1"></p>
+            </div>
+        </div>
+
+        <div id="step2" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Bước 2: Chọn Tiêu Chí và Phương Án</h2>
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">Tiêu Chí Đánh Giá</h3>
+                        <label class="flex items-center text-sm">
+                            <input type="checkbox" id="selectAllCriteria" class="mr-1">
+                            Chọn tất cả
+                        </label>
+                    </div>
+                    <div id="criteriaList" class="space-y-2"></div>
+                    <div class="mt-3">
+                        <input type="text" id="customCriterion" placeholder="Thêm tiêu chí mới..." class="p-2 border rounded w-full mb-2">
+                        <button onclick="addCustomCriterion()" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                            Thêm Tiêu Chí
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-semibold">Phương Án Lựa Chọn</h3>
+                        <label class="flex items-center text-sm">
+                            <input type="checkbox" id="selectAllAlternatives" class="mr-1">
+                            Chọn tất cả
+                        </label>
+                    </div>
+                    <div id="alternativesList" class="space-y-2"></div>
+                    <div class="mt-3">
+                        <input type="text" id="customAlternative" placeholder="Thêm phương án mới..." class="p-2 border rounded w-full mb-2">
+                        <button onclick="addCustomAlternative()" class="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                            Thêm Phương Án
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button onclick="startComparison()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
+                Bắt Đầu So Sánh
+            </button>
+        </div>
+
+        <div id="step3" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Bước 3: So Sánh Các Tiêu Chí</h2>
+            <div class="mb-6">
+                <h3 class="font-semibold mb-2">Thang Đánh Giá của Saaty:</h3>
+                <div class="mb-3 p-3 bg-gray-50 rounded text-sm">
+                    <p class="mb-2">Trong thang đánh giá Saaty từ 1/9 đến 9, giá trị mô tả mức độ quan trọng của yếu tố đang được xem xét so với yếu tố khác:</p>
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li><b>1/9</b>: Hoàn toàn kém quan trọng hơn (nghịch đảo của 9)</li>
+                        <li><b>1/7</b>: Rất kém quan trọng hơn (nghịch đảo của 7)</li>
+                        <li><b>1/5</b>: Kém quan trọng hơn (nghịch đảo của 5)</li>
+                        <li><b>1/3</b>: Hơi kém quan trọng hơn (nghịch đảo của 3)</li>
+                        <li><b>1</b>: Hai yếu tố A và B đóng góp như nhau</li>
+                        <li><b>3</b>: Yếu tố A được chọn lựa, quan tâm hơn yếu tố B trong sự đóng góp</li>
+                        <li><b>5</b>: Yếu tố A đóng góp nhiều hơn B</li>
+                        <li><b>7</b>: Yếu tố A đóng góp hơn B rất nhiều, thể hiện rõ ràng cho trường hợp cụ thể</li>
+                        <li><b>9</b>: Sự quan trọng hơn hẳn ở trên mức có thể, gần như triệt tiêu</li>
+                    </ul>
+                    </div>
+                <div class="mt-4 p-3 bg-blue-50 rounded text-sm">
+                    <p class="font-semibold mb-1">Quan hệ đối xứng trong ma trận:</p>
+                    <p>Giả sử có kết quả ma trận so sánh cặp như sau: Chú ý ma trận này đường chéo có giá trị là 1 vì tiêu chí so sánh với chính nó (có mức độ quan trọng như nhau). Giá trị ở hàng 1 cột 2 là 5 có nghĩa là tiêu chí về giá có mức độ quan trọng gấp 5 lần tiêu chí về bộ nhớ, và như vậy thì giá trị ở hàng 2 cột 1 là 1/5 (bộ nhớ ít quan trọng hơn giá 5 lần).</p>
+                </div>
+            </div>
+            <div id="comparisonMatrix" class="overflow-x-auto mb-6">
+                <table class="matrix-table">
+                    <thead>
+                        <tr id="matrixHeader"></tr>
+                    </thead>
+                    <tbody id="matrixBody"></tbody>
+                </table>
+            </div>
+            <div id="comparisonPrompt" class="mt-4 p-4 bg-blue-50 rounded">
+                <div class="text-center mb-4">
+                    <p class="font-semibold">So sánh tầm quan trọng của:</p>
+                    <p class="text-lg" id="comparisonText"></p>
+                </div>
+                <div class="saaty-value-selector">
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="1/9">1/9</button>
+                        <div class="saaty-value-label">Cực kỳ kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="1/7">1/7</button>
+                        <div class="saaty-value-label">Rất kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="1/5">1/5</button>
+                        <div class="saaty-value-label">Kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="1/3">1/3</button>
+                        <div class="saaty-value-label">Hơi kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn active" data-value="1">1</button>
+                        <div class="saaty-value-label">Bằng nhau</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="3">3</button>
+                        <div class="saaty-value-label">Hơi quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="5">5</button>
+                        <div class="saaty-value-label">Quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="7">7</button>
+                        <div class="saaty-value-label">Rất quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="saaty-value-btn" data-value="9">9</button>
+                        <div class="saaty-value-label">Cực kỳ quan trọng hơn</div>
+                    </div>
+                </div>
+                <div class="comparison-value" id="comparisonValue">1</div>
+                <div class="text-center">
+                    <button onclick="submitComparison()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Xác Nhận
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step4" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Bước 3a: So Sánh Các Phương Án Theo Từng Tiêu Chí</h2>
+            <div class="flex items-center justify-center py-8">
+                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <p class="ml-3 text-lg font-medium text-gray-700">Đang tạo ma trận so sánh nhất quán (CR < 10%)...</p>
+            </div>
+            <p class="text-center text-sm text-gray-600 mt-2">Hệ thống đang phân tích tiêu chí, tính toán các giá trị định lượng và tạo ma trận với tỷ lệ nhất quán tốt</p>
+            
+            <div class="mb-4">
+                <div class="flex space-x-2 mb-4" id="criteriaTabButtons">
+                    <!-- Tab buttons sẽ được thêm vào đây -->
+                </div>
+                
+                <div id="criteriaTabContents">
+                    <!-- Tab contents sẽ được thêm vào đây -->
+                </div>
+            </div>
+            
+            <div id="alternativeComparisonPrompt" class="mt-4 p-4 bg-blue-50 rounded hidden">
+                <div class="text-center mb-4">
+                    <p class="font-semibold">So sánh mức độ phù hợp của:</p>
+                    <p class="text-lg" id="alternativeComparisonText"></p>
+                </div>
+                <div class="saaty-value-selector">
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="1/9">1/9</button>
+                        <div class="saaty-value-label">Cực kỳ kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="1/7">1/7</button>
+                        <div class="saaty-value-label">Rất kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="1/5">1/5</button>
+                        <div class="saaty-value-label">Kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="1/3">1/3</button>
+                        <div class="saaty-value-label">Hơi kém quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn active" data-value="1">1</button>
+                        <div class="saaty-value-label">Bằng nhau</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="3">3</button>
+                        <div class="saaty-value-label">Hơi quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="5">5</button>
+                        <div class="saaty-value-label">Quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="7">7</button>
+                        <div class="saaty-value-label">Rất quan trọng hơn</div>
+                    </div>
+                    <div class="saaty-value-group">
+                        <button class="alt-saaty-value-btn" data-value="9">9</button>
+                        <div class="saaty-value-label">Cực kỳ quan trọng hơn</div>
+                    </div>
+                </div>
+                <div class="comparison-value" id="alternativeComparisonValue">1</div>
+                <div class="text-center">
+                    <button onclick="submitAlternativeComparison()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                        Xác Nhận
+                    </button>
+                </div>
+            </div>
+            
+            <div class="text-center mt-6">
+                <button onclick="calculateFinalResults()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg">
+                    Tổng Hợp Kết Quả
+                </button>
+            </div>
+        </div>
+
+        <div id="step4" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Bước 4: Các Bước Tính Toán</h2>
+            <div class="space-y-6">
+                <div class="p-4 bg-gray-50 rounded">
+                    <h3 class="font-semibold mb-2">4.1. Tính Tổng Cột</h3>
+                    <div id="sumColumns" class="overflow-x-auto"></div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded">
+                    <h3 class="font-semibold mb-2">4.2. Ma Trận Chuẩn Hóa</h3>
+                    <div id="normalizedMatrix" class="overflow-x-auto"></div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded">
+                    <h3 class="font-semibold mb-2">4.3. Trọng Số Các Tiêu Chí</h3>
+                    <div id="criteriaWeights" class="overflow-x-auto"></div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded">
+                    <h3 class="font-semibold mb-2">4.4. Giá Trị Tổng Trọng Số</h3>
+                    <div id="weightedSums" class="overflow-x-auto"></div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded">
+                    <h3 class="font-semibold mb-2">4.5. Vector Nhất Quán</h3>
+                    <div id="consistencyVector" class="overflow-x-auto"></div>
+                </div>
+                
+                <div class="p-4 bg-gray-50 rounded">
+                    <h3 class="font-semibold mb-2">4.6. Kiểm Tra Độ Nhất Quán</h3>
+                    <div id="consistencyCheck" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="step5" class="bg-white rounded-lg shadow-md p-6 hidden">
+            <h2 class="text-xl font-semibold mb-4">Bước 5: Kết Quả Cuối Cùng</h2>
+            
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <div class="result-card">
+                    <h3 class="font-semibold mb-2">Trọng Số Các Tiêu Chí</h3>
+                    <canvas id="weightsChart"></canvas>
+                </div>
+                <div class="result-card">
+                    <h3 class="font-semibold mb-2">Thông Tin Độ Nhất Quán</h3>
+                    <div id="consistencyInfo" class="space-y-2"></div>
+                </div>
+            </div>
+            
+            <div class="mb-6">
+                <h3 class="font-semibold mb-4">Trọng Số Các Phương Án Theo Từng Tiêu Chí</h3>
+                <div id="alternativeWeightsBycriterion" class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <!-- Alternative weights by criterion charts will be added here -->
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <h3 class="font-semibold mb-2">Phương Án Tốt Nhất</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <canvas id="finalScoresChart"></canvas>
+                    </div>
+                    <div>
+                        <table class="matrix-table" id="finalScoresTable">
+                            <thead>
+                                <tr>
+                                    <th>Phương Án</th>
+                                    <th>Điểm Số</th>
+                                    <th>Xếp Hạng</th>
+                                </tr>
+                            </thead>
+                            <tbody id="finalScoresBody">
+                                <!-- Final scores rows will be added here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedCriteria = [];
+        let selectedAlternatives = [];
+        let comparisonMatrix = [];
+        let currentComparison = { i: 0, j: 0 };
+        let weightsChart = null;
+        let criteriaWeights = [];
+        let alternativeMatrices = {};
+        let currentCriterion = "";
+        let currentAlternativeComparison = { i: 0, j: 0 };
+        let finalScoresChart = null;
+        let alternativeWeightsCharts = {};
+        let currentSaatyValue = "1";
+        let currentAltSaatyValue = "1";
+
+        const saatyScale = {
+            "1/9": "Cực kỳ kém quan trọng hơn",
+            "1/7": "Rất kém quan trọng hơn",
+            "1/5": "Kém quan trọng hơn",
+            "1/3": "Hơi kém quan trọng hơn",
+            "1": "Quan trọng bằng nhau",
+            "3": "Hơi quan trọng hơn",
+            "5": "Quan trọng hơn",
+            "7": "Rất quan trọng hơn",
+            "9": "Cực kỳ quan trọng hơn"
+        };
+
+        // Thêm mô tả chi tiết hơn cho thang đánh giá
+        const saatyScaleDescription = {
+            "1/9": "Yếu tố này hoàn toàn kém quan trọng hơn so với yếu tố kia",
+            "1/7": "Yếu tố này rất kém quan trọng hơn so với yếu tố kia",
+            "1/5": "Yếu tố này kém quan trọng hơn so với yếu tố kia",
+            "1/3": "Yếu tố này hơi kém quan trọng hơn so với yếu tố kia",
+            "1": "Hai yếu tố A và B đóng góp như nhau",
+            "3": "Yếu tố A được chọn lựa, quan tâm hơn yếu tố B trong sự đóng góp",
+            "5": "Yếu tố A đóng góp nhiều hơn B",
+            "7": "Yếu tố A đóng góp hơn B rất nhiều, thể hiện rõ ràng cho trường hợp cụ thể",
+            "9": "Sự quan trọng hơn hẳn ở trên mức có thể, gần như triệt tiêu"
+        };
+
+        // Hàm chuyển đổi chuỗi phân số thành số thực
+        function fractionToNumber(fractionStr) {
+            if (typeof fractionStr !== 'string') {
+                return Number(fractionStr);
+            }
+            
+            if (fractionStr.includes('/')) {
+                const parts = fractionStr.split('/');
+                if (parts.length !== 2) {
+                    console.error(`Định dạng phân số không hợp lệ: ${fractionStr}`);
+                    return 1; // Giá trị mặc định an toàn
+                }
+                
+                const numerator = parseFloat(parts[0]);
+                const denominator = parseFloat(parts[1]);
+                
+                if (isNaN(numerator) || isNaN(denominator)) {
+                    console.error(`Phân số chứa giá trị không phải số: ${fractionStr}`);
+                    return 1; // Giá trị mặc định an toàn
+                }
+                
+                if (denominator === 0) {
+                    console.error(`Mẫu số bằng 0: ${fractionStr}`);
+                    return 1; // Giá trị mặc định an toàn
+                }
+                
+                return numerator / denominator;
+            }
+            
+            const numValue = parseFloat(fractionStr);
+            return isNaN(numValue) ? 1 : numValue;
+        }
+
+        // Hàm xử lý khi người dùng chọn giá trị cho tiêu chí
+        document.addEventListener('DOMContentLoaded', function() {
+            // Xử lý nút chọn giá trị Saaty cho tiêu chí
+            document.querySelectorAll('.saaty-value-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Bỏ active state từ tất cả các nút
+                    document.querySelectorAll('.saaty-value-btn').forEach(b => b.classList.remove('active'));
+                    // Thêm active state cho nút được chọn
+                    this.classList.add('active');
+                    // Cập nhật giá trị hiện tại
+                    currentSaatyValue = this.dataset.value;
+                    document.getElementById('comparisonValue').textContent = currentSaatyValue;
+                    updateComparisonText();
+                });
+            });
+
+            // Xử lý nút chọn giá trị Saaty cho phương án
+            document.querySelectorAll('.alt-saaty-value-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Bỏ active state từ tất cả các nút
+                    document.querySelectorAll('.alt-saaty-value-btn').forEach(b => b.classList.remove('active'));
+                    // Thêm active state cho nút được chọn
+                    this.classList.add('active');
+                    // Cập nhật giá trị hiện tại
+                    currentAltSaatyValue = this.dataset.value;
+                    document.getElementById('alternativeComparisonValue').textContent = currentAltSaatyValue;
+                    updateAlternativeComparisonText();
+                });
+            });
+        });
+
+        function updateComparisonText() {
+            document.getElementById('comparisonText').innerHTML = `
+                <b>${selectedCriteria[currentComparison.j]}</b> so với <b>${selectedCriteria[currentComparison.i]}</b>
+                <br>
+                <span class="text-sm font-medium text-gray-700">${saatyScale[currentSaatyValue]}</span>
+                <br>
+                <span class="text-xs text-gray-600">${saatyScaleDescription[currentSaatyValue]}</span>
+            `;
+        }
+
+        function updateAlternativeComparisonText() {
+            document.getElementById('alternativeComparisonText').innerHTML = `
+                <b>${selectedAlternatives[currentAlternativeComparison.j]}</b> so với <b>${selectedAlternatives[currentAlternativeComparison.i]}</b>
+                theo tiêu chí "<b>${currentCriterion}</b>"
+                <br>
+                <span class="text-sm font-medium text-gray-700">${saatyScale[currentAltSaatyValue]}</span>
+                <br>
+                <span class="text-xs text-gray-600">${saatyScaleDescription[currentAltSaatyValue]}</span>
+            `;
+        }
+
+        // Xử lý chọn tất cả tiêu chí
+        document.getElementById('selectAllCriteria').addEventListener('change', function(e) {
+            const checkboxes = document.querySelectorAll('#criteriaList input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        // Xử lý chọn tất cả phương án
+        document.getElementById('selectAllAlternatives').addEventListener('change', function(e) {
+            const checkboxes = document.querySelectorAll('#alternativesList input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        // Thêm tiêu chí tùy chỉnh
+        function addCustomCriterion() {
+            const criterionInput = document.getElementById('customCriterion');
+            const criterionText = criterionInput.value.trim();
+            
+            if (criterionText) {
+                const criteriaList = document.getElementById('criteriaList');
+                const newItem = document.createElement('label');
+                newItem.className = 'flex items-center';
+                newItem.innerHTML = `
+                    <input type="checkbox" class="mr-2" value="${criterionText}" checked>
+                    ${criterionText}
+                `;
+                criteriaList.appendChild(newItem);
+                criterionInput.value = '';
+            }
+        }
+
+        // Thêm phương án tùy chỉnh
+        function addCustomAlternative() {
+            const alternativeInput = document.getElementById('customAlternative');
+            const alternativeText = alternativeInput.value.trim();
+            
+            if (alternativeText) {
+                const alternativesList = document.getElementById('alternativesList');
+                const newItem = document.createElement('label');
+                newItem.className = 'flex items-center';
+                newItem.innerHTML = `
+                    <input type="checkbox" class="mr-2" value="${alternativeText}" checked>
+                    ${alternativeText}
+                `;
+                alternativesList.appendChild(newItem);
+                alternativeInput.value = '';
+            }
+        }
+
+        function handleFileChange() {
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const dragDropText = document.getElementById('dragDropText');
+            
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                fileName.textContent = file.name;
+                
+                // Kiểm tra kích thước file (tối đa 10MB)
+                const maxSize = 10 * 1024 * 1024; // 10MB
+                if (file.size > maxSize) {
+                    alert('Kích thước file vượt quá 10MB. Vui lòng chọn file nhỏ hơn.');
+                    fileInput.value = '';
+                    fileInfo.classList.add('hidden');
+                    dragDropText.innerHTML = '<span class="font-semibold">Chọn file</span> hoặc kéo và thả';
+                    return;
+                }
+                
+                // Hiển thị kích thước file phù hợp
+                let size = file.size;
+                let unit = 'bytes';
+                
+                if (size > 1024 * 1024) {
+                    size = (size / (1024 * 1024)).toFixed(2);
+                    unit = 'MB';
+                } else if (size > 1024) {
+                    size = (size / 1024).toFixed(2);
+                    unit = 'KB';
+                }
+                
+                fileSize.textContent = `${size} ${unit}`;
+                fileInfo.classList.remove('hidden');
+                dragDropText.innerHTML = 'File đã sẵn sàng';
+                
+                // Kiểm tra định dạng file
+                const extension = file.name.split('.').pop().toLowerCase();
+                if (extension !== 'docx') {
+                    alert('Chỉ hỗ trợ file định dạng Word (.docx)');
+                    fileInput.value = '';
+                    fileInfo.classList.add('hidden');
+                    dragDropText.innerHTML = '<span class="font-semibold">Chọn file</span> hoặc kéo và thả';
+                }
+            } else {
+                fileInfo.classList.add('hidden');
+                dragDropText.innerHTML = '<span class="font-semibold">Chọn file</span> hoặc kéo và thả';
+            }
+        }
+        
+        function removeFile() {
+            const fileInput = document.getElementById('fileInput');
+            const fileInfo = document.getElementById('fileInfo');
+            const dragDropText = document.getElementById('dragDropText');
+            
+            fileInput.value = '';
+            fileInfo.classList.add('hidden');
+            dragDropText.innerHTML = '<span class="font-semibold">Chọn file</span> hoặc kéo và thả';
+        }
+        
+        function submitForm() {
+            const goal = document.getElementById('goal').value;
+            if (!goal) {
+                alert('Vui lòng nhập mục tiêu');
+                return;
+            }
+
+            // Hiển thị trạng thái đang xử lý
+            const processingStatus = document.getElementById('processingStatus');
+            const statusText = document.getElementById('statusText');
+            const statusDetails = document.getElementById('statusDetails');
+            processingStatus.classList.remove('hidden');
+            statusText.textContent = 'Đang xử lý...';
+            statusDetails.textContent = '';
+            
+            const form = document.getElementById('goalForm');
+            const formData = new FormData(form);
+            
+            // Kiểm tra nếu có file
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                statusDetails.textContent = `Đang phân tích file: ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            } else {
+                statusDetails.textContent = 'Đang phân tích mục tiêu...';
+            }
+            
+            // Vô hiệu hóa nút submit để ngăn gửi nhiều lần
+            const submitButton = document.querySelector('button[onclick="submitForm()"]');
+            submitButton.disabled = true;
+            submitButton.classList.add('opacity-50');
+            
+            // Gửi form bằng AJAX
+            fetch('/get_suggestions', {
+                    method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Lỗi kết nối đến server');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Ẩn trạng thái xử lý
+                processingStatus.classList.add('hidden');
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                
+                // Hiển thị tiêu chí và phương án
+                const criteriaList = document.getElementById('criteriaList');
+                criteriaList.innerHTML = data.criteria.map(criterion => `
+                    <label class="flex items-center">
+                        <input type="checkbox" class="mr-2" value="${criterion}" checked>
+                        ${criterion}
+                    </label>
+                `).join('');
+
+                const alternativesList = document.getElementById('alternativesList');
+                alternativesList.innerHTML = data.alternatives.map(alternative => `
+                    <label class="flex items-center">
+                        <input type="checkbox" class="mr-2" value="${alternative}" checked>
+                        ${alternative}
+                    </label>
+                `).join('');
+
+                // Hiển thị bước tiếp theo
+                document.getElementById('step2').classList.remove('hidden');
+                document.getElementById('step2').scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                processingStatus.classList.add('hidden');
+                alert('Có lỗi xảy ra: ' + error.message);
+            })
+            .finally(() => {
+                // Bật lại nút submit
+                submitButton.disabled = false;
+                submitButton.classList.remove('opacity-50');
+            });
+        }
+
+        function startComparison() {
+            selectedCriteria = Array.from(document.querySelectorAll('#criteriaList input:checked')).map(cb => cb.value);
+            selectedAlternatives = Array.from(document.querySelectorAll('#alternativesList input:checked')).map(cb => cb.value);
+
+            if (selectedCriteria.length < 2 || selectedAlternatives.length < 2) {
+                alert('Vui lòng chọn ít nhất 2 tiêu chí và 2 phương án');
+                return;
+            }
+
+            // Reset current state
+            currentComparison = { i: 0, j: 0 };
+            criteriaWeights = [];
+            alternativeMatrices = {};
+            currentSaatyValue = "1";
+
+            const n = selectedCriteria.length;
+            comparisonMatrix = Array(n).fill().map(() => Array(n).fill(1));
+            
+            const matrixHeader = document.getElementById('matrixHeader');
+            matrixHeader.innerHTML = `
+                <th class="p-2 border"></th>
+                ${selectedCriteria.map(c => `<th class="p-2 border">${c}</th>`).join('')}
+            `;
+
+            const matrixBody = document.getElementById('matrixBody');
+            matrixBody.innerHTML = selectedCriteria.map((c, i) => `
+                <tr>
+                    <td class="p-2 border font-semibold">${c}</td>
+                    ${Array(n).fill().map((_, j) => `
+                        <td class="p-2 border" id="cell-${i}-${j}">
+                            ${i === j ? '1' : ''}
+                        </td>
+                    `).join('')}
+                </tr>
+            `).join('');
+
+            document.getElementById('step3').classList.remove('hidden');
+            startNextComparison();
+        }
+
+        function startNextComparison() {
+            const n = selectedCriteria.length;
+            while (currentComparison.i < n) {
+                if (currentComparison.j < currentComparison.i) {
+                    // Reset giá trị Saaty 
+                    document.querySelectorAll('.saaty-value-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.dataset.value === '1') {
+                            btn.classList.add('active');
+                        }
+                    });
+                    currentSaatyValue = "1";
+                    document.getElementById('comparisonValue').textContent = currentSaatyValue;
+                    updateComparisonText();
+                    return;
+                }
+                currentComparison.j = 0;
+                currentComparison.i++;
+            }
+            
+            // Đã hoàn thành so sánh các tiêu chí
+            calculateCriteriaWeights();
+        }
+
+        function submitComparison() {
+            const valueStr = currentSaatyValue;
+            const value = fractionToNumber(valueStr);
+            
+            if (isNaN(value) || value <= 0) {
+                alert('Giá trị không hợp lệ');
+                return;
+            }
+
+            const { i, j } = currentComparison;
+            // Đảm bảo rằng ma trận đối xứng được lưu trữ đúng
+            // Phải lưu giá trị vào vị trí [j][i] vì chúng ta đang so sánh j với i
+            comparisonMatrix[j][i] = value;
+            comparisonMatrix[i][j] = 1 / value;
+
+            document.getElementById(`cell-${j}-${i}`).textContent = valueStr;
+            document.getElementById(`cell-${i}-${j}`).textContent = value === 1 ? '1' : `1/${valueStr}`.replace('1/1/', '1/');
+
+            currentComparison.j++;
+            startNextComparison();
+        }
+
+        async function calculateCriteriaWeights() {
+            try {
+                const response = await fetch('/calculate_ahp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ matrix: comparisonMatrix })
+                });
+                
+                const result = await response.json();
+                criteriaWeights = result.weights;
+                
+                if (result.cr > 0.1) {
+                    if (confirm(`Tỷ số nhất quán (CR) = ${result.cr.toFixed(4)} > 0.1, độ nhất quán không đảm bảo. Bạn có muốn nhập lại ma trận so sánh?`)) {
+                        // Reset và bắt đầu lại từ đầu
+                        startComparison();
+                        return;
+                    }
+                }
+                
+                showCalculationSteps(result);
+                setupAlternativeComparisons();
+            } catch (error) {
+                alert('Có lỗi xảy ra khi tính toán trọng số tiêu chí');
+            }
+        }
+
+        function setupAlternativeComparisons() {
+            // Hiển thị thông báo đang tải
+            document.getElementById('step3a').innerHTML = `
+                <h2 class="text-xl font-semibold mb-4">Bước 3a: So Sánh Các Phương Án Theo Từng Tiêu Chí</h2>
+                <div class="flex items-center justify-center py-8">
+                    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                    <p class="ml-3 text-lg font-medium text-gray-700">Đang tạo ma trận so sánh nhất quán (CR < 10%)...</p>
+                </div>
+                <p class="text-center text-sm text-gray-600 mt-2">Hệ thống đang phân tích tiêu chí, tính toán các giá trị định lượng và tạo ma trận với tỷ lệ nhất quán tốt</p>
+            `;
+            document.getElementById('step3a').classList.remove('hidden');
+            
+            // Lấy mục tiêu
+            const goal = document.getElementById('goal').value;
+            
+            // Gọi API để lấy ma trận từ server
+            fetch('/get_alternative_matrices', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    criteria: selectedCriteria,
+                    alternatives: selectedAlternatives,
+                    goal: goal
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Lỗi khi lấy ma trận từ server');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Tạo lại nội dung cho step3a
+                document.getElementById('step3a').innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">Bước 3a: So Sánh Các Phương Án Theo Từng Tiêu Chí</h2>
+                    
+                    <div class="p-4 bg-green-50 rounded border border-green-200 mb-4">
+                        <p class="font-medium text-green-800">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline-block mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812 3.066 3.066 0 00.723 1.745 3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            ${data.matrix_info || "Ma trận so sánh đã được tạo tự động cho các phương án theo từng tiêu chí."}
+                        </p>
+                        <p class="text-sm text-green-700 mt-1">Các giá trị được tính toán dựa trên phân tích định lượng nếu tiêu chí có thể đo lường được.</p>
+                        <p class="text-sm text-green-700 mt-1">Mỗi ma trận đã được điều chỉnh tự động để đảm bảo tỷ số nhất quán (CR) nằm trong khoảng 0 < CR < 10%.</p>
+                    </div>
+                    
+                    <div class="mb-4 grid grid-cols-1 gap-6">
+                        ${selectedCriteria.map((criterion, index) => {
+                            // Lấy ma trận từ API hoặc tạo ma trận rỗng nếu không có
+                            const n = selectedAlternatives.length;
+                            const matrices = data.matrices || {};
+                            const matrix = matrices[criterion] || Array(n).fill().map(() => Array(n).fill("1"));
+                            const matrixInfo = data.matrices_info && data.matrices_info[criterion] ? data.matrices_info[criterion] : {};
+                            const isQuantitative = matrixInfo.is_quantitative;
+                            const cr = matrixInfo.cr;
+                            
+                            // Lưu ma trận vào biến toàn cục
+                            alternativeMatrices[criterion] = matrix;
+                            
+                            return `
+                                <div class="criterion-matrix-container bg-white rounded-lg shadow-md p-5 mb-4 animate-fade-in" style="animation-delay: ${index * 0.1}s;">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="text-lg font-semibold mb-2">Tiêu chí: ${criterion}</h3>
+                                            ${isQuantitative ? `
+                                                <div class="bg-green-50 text-green-800 rounded px-3 py-1 text-sm inline-flex items-center mb-2">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                                    </svg>
+                                                    Tiêu chí định lượng
+                                                </div>
+                                                ${matrixInfo.unit ? `<div class="text-sm text-gray-600 mb-2">Đơn vị đo: ${matrixInfo.unit}</div>` : ''}
+                                                ${matrixInfo.values ? `
+                                                    <div class="bg-blue-50 p-3 rounded-md mb-3">
+                                                        <p class="text-sm font-medium text-blue-800 mb-2">Giá trị định lượng:</p>
+                                                        <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
+                                                            ${Object.entries(matrixInfo.values).map(([alt, val]) => `
+                                                                <div class="bg-white p-2 rounded border border-blue-100">
+                                                                    <div class="text-sm font-medium">${alt}</div>
+                                                                    <div class="text-blue-700">${val} ${matrixInfo.unit || ''}</div>
+                                                                </div>
+                                                            `).join('')}
+                                                        </div>
+                                                    </div>
+                                                ` : ''}
+                                            ` : ''}
+                                            ${cr !== undefined ? `
+                                                <div class="mt-1 flex items-center">
+                                                    <span class="text-sm mr-2">Tỷ số nhất quán (CR):</span>
+                                                    <span class="font-medium ${parseFloat(cr) < 0.1 ? 'text-green-600' : 'text-orange-600'}">
+                                                        ${(parseFloat(cr) * 100).toFixed(1)}%
+                                                    </span>
+                                                    <span class="ml-1 text-sm text-gray-500">(${parseFloat(cr) < 0.1 ? 'Tốt' : 'Cần cải thiện'})</span>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                        <div class="flex space-x-2">
+                                            <button onclick="resetAlternativeMatrix('${criterion}')" class="text-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 transition duration-300 rounded-md flex items-center">
+                                                <i class="fas fa-redo-alt mr-1"></i> Reset
+                                            </button>
+                                            <button onclick="calculateAlternativeWeights('${criterion}')" class="text-sm px-3 py-1 bg-blue-600 text-white hover:bg-blue-700 transition duration-300 rounded-md flex items-center">
+                                                <i class="fas fa-calculator mr-1"></i> Tính trọng số
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 overflow-x-auto">
+                                        <table class="matrix-table">
+                                            <thead>
+                                                <tr>
+                                                    <th class="bg-blue-50"></th>
+                                                    ${selectedAlternatives.map(alt => `<th class="bg-blue-50">${alt}</th>`).join('')}
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${selectedAlternatives.map((alt1, i) => `
+                                                    <tr>
+                                                        <th>${alt1}</th>
+                                                        ${selectedAlternatives.map((alt2, j) => {
+                                                            const value = i === j ? "1" : (matrix[i][j] || "");
+                                                            return `
+                                                                <td 
+                                                                    id="${criterion}-cell-${i}-${j}" 
+                                                                    onclick="${i !== j ? `editAlternativeMatrix('${criterion}', ${i}, ${j})` : ''}"
+                                                                    class="${i !== j ? 'cursor-pointer hover:bg-blue-50' : ''} ${value ? 'matrix-comparison-value' : ''}">
+                                                                    ${value}
+                                                                </td>
+                                                            `;
+                                                        }).join('')}
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                            <div id="${criterion}-consistency-info" class="text-sm p-3 mt-4 bg-gray-50 rounded hidden"></div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div class="flex justify-center mt-8">
+                        <button onclick="calculateFinalScores()" class="px-6 py-3 bg-green-600 text-white rounded-lg shadow-md hover:bg-green-700 transition duration-300 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 animate-pulse" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                            </svg>
+                            Tính Toán Kết Quả Cuối Cùng
+                        </button>
+                    </div>
+                    
+                    <div id="alternativeComparisonPrompt" class="mt-4 p-4 bg-blue-50 rounded hidden">
+                        <div class="text-center mb-4">
+                            <p class="font-semibold">So sánh mức độ phù hợp của:</p>
+                            <p class="text-lg" id="alternativeComparisonText"></p>
+                        </div>
+                        <div class="saaty-value-selector">
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="1/9">1/9</button>
+                                <div class="saaty-value-label">Cực kỳ kém quan trọng hơn</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="1/7">1/7</button>
+                                <div class="saaty-value-label">Rất kém quan trọng hơn</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="1/5">1/5</button>
+                                <div class="saaty-value-label">Kém quan trọng hơn</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="1/3">1/3</button>
+                                <div class="saaty-value-label">Hơi kém quan trọng hơn</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn active" data-value="1">1</button>
+                                <div class="saaty-value-label">Bằng nhau</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="3">3</button>
+                                <div class="saaty-value-label">Hơi quan trọng hơn</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="5">5</button>
+                                <div class="saaty-value-label">Quan trọng hơn</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="7">7</button>
+                                <div class="saaty-value-label">Rất quan trọng hơn</div>
+                            </div>
+                            <div class="saaty-value-group">
+                                <button class="alt-saaty-value-btn" data-value="9">9</button>
+                                <div class="saaty-value-label">Cực kỳ quan trọng hơn</div>
+                            </div>
+                        </div>
+                        <div class="comparison-value" id="alternativeComparisonValue">1</div>
+                        <div class="text-center">
+                            <button onclick="submitAlternativeComparison()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                                Xác Nhận
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Gắn lại event listeners cho các nút chọn giá trị Saaty
+                document.querySelectorAll('.alt-saaty-value-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.alt-saaty-value-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        currentAltSaatyValue = this.dataset.value;
+                        document.getElementById('alternativeComparisonValue').textContent = currentAltSaatyValue;
+                        updateAlternativeComparisonText();
+                    });
+                });
+                
+                // Hiển thị phần so sánh phương án
+                document.getElementById('step3a').classList.remove('hidden');
+                document.getElementById('processStep3a').classList.add('active');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('step3a').innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">Bước 3a: So Sánh Các Phương Án Theo Từng Tiêu Chí</h2>
+                    <div class="p-4 bg-red-100 rounded text-red-700">
+                        <p class="font-semibold">Có lỗi xảy ra khi tạo ma trận so sánh:</p>
+                        <p>${error.message}</p>
+                        <button onclick="setupAlternativeComparisonsManual()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                            Tạo Ma Trận Thủ Công
+                        </button>
+                    </div>
+                `;
+            });
+        }
+        
+        function editAlternativeMatrix(criterion, i, j) {
+            // Lưu thông tin ô đang chỉnh sửa
+            currentAlternativeComparison = { i, j };
+            currentCriterion = criterion;
+            
+            // Lấy giá trị hiện tại
+            const cell = document.getElementById(`${criterion}-cell-${i}-${j}`);
+            const currentValue = cell.textContent.trim();
+            currentAltSaatyValue = currentValue || "1";
+            
+            // Cập nhật hiển thị
+            document.getElementById('alternativeComparisonValue').textContent = currentAltSaatyValue;
+            
+            // Active nút tương ứng
+            document.querySelectorAll('.alt-saaty-value-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === currentAltSaatyValue) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Hiển thị phần so sánh và cập nhật text
+            updateAlternativeComparisonText();
+            document.getElementById('alternativeComparisonPrompt').classList.remove('hidden');
+            
+            // Làm nổi bật ô đang được chỉnh sửa
+            document.querySelectorAll('.matrix-cell-highlight').forEach(cell => {
+                cell.classList.remove('matrix-cell-highlight');
+            });
+            cell.classList.add('matrix-cell-highlight');
+            cell.classList.add('animate-pulse');
+            
+            // Scroll đến phần so sánh
+            document.getElementById('alternativeComparisonPrompt').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            
+            // Hiển thị thông tin về tiêu chí đang chỉnh sửa
+            const infoMessage = `<div class="bg-blue-50 p-2 rounded text-blue-800 text-sm flex items-center mb-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Đang chỉnh sửa ô trong tiêu chí: <strong>${criterion}</strong>
+            </div>`;
+            
+            const promptHeader = document.querySelector('#alternativeComparisonPrompt > div:first-child');
+            promptHeader.insertAdjacentHTML('beforebegin', infoMessage);
+        }
+        
+        // Hàm để thiết lập so sánh thủ công nếu API bị lỗi
+        function setupAlternativeComparisonsManual() {
+            // Tạo các tab cho từng tiêu chí
+            const tabButtonsContainer = document.getElementById('criteriaTabButtons');
+            const tabContentsContainer = document.getElementById('criteriaTabContents');
+            
+            document.getElementById('step3a').innerHTML = `
+                <h2 class="text-xl font-semibold mb-4">Bước 3a: So Sánh Các Phương Án Theo Từng Tiêu Chí</h2>
+                
+                <div class="mb-4">
+                    <div class="flex space-x-2 mb-4" id="criteriaTabButtons">
+                        <!-- Tab buttons sẽ được thêm vào đây -->
+                    </div>
+                    
+                    <div id="criteriaTabContents">
+                        <!-- Tab contents sẽ được thêm vào đây -->
+                    </div>
+                </div>
+                
+                <div id="alternativeComparisonPrompt" class="mt-4 p-4 bg-blue-50 rounded hidden">
+                    <div class="text-center mb-4">
+                        <p class="font-semibold">So sánh mức độ phù hợp của:</p>
+                        <p class="text-lg" id="alternativeComparisonText"></p>
+                    </div>
+                    <div class="saaty-value-selector">
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="1/9">1/9</button>
+                            <div class="saaty-value-label">Cực kỳ kém quan trọng hơn</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="1/7">1/7</button>
+                            <div class="saaty-value-label">Rất kém quan trọng hơn</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="1/5">1/5</button>
+                            <div class="saaty-value-label">Kém quan trọng hơn</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="1/3">1/3</button>
+                            <div class="saaty-value-label">Hơi kém quan trọng hơn</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn active" data-value="1">1</button>
+                            <div class="saaty-value-label">Bằng nhau</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="3">3</button>
+                            <div class="saaty-value-label">Hơi quan trọng hơn</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="5">5</button>
+                            <div class="saaty-value-label">Quan trọng hơn</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="7">7</button>
+                            <div class="saaty-value-label">Rất quan trọng hơn</div>
+                        </div>
+                        <div class="saaty-value-group">
+                            <button class="alt-saaty-value-btn" data-value="9">9</button>
+                            <div class="saaty-value-label">Cực kỳ quan trọng hơn</div>
+                        </div>
+                    </div>
+                    <div class="comparison-value" id="alternativeComparisonValue">1</div>
+                    <div class="text-center">
+                        <button onclick="submitAlternativeComparison()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                            Xác Nhận
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-6">
+                    <button onclick="calculateFinalResults()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-lg">
+                        Tổng Hợp Kết Quả
+                    </button>
+                </div>
+            `;
+            
+            // Gắn lại event listeners cho các nút chọn giá trị Saaty
+            document.querySelectorAll('.alt-saaty-value-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.alt-saaty-value-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentAltSaatyValue = this.dataset.value;
+                    document.getElementById('alternativeComparisonValue').textContent = currentAltSaatyValue;
+                    updateAlternativeComparisonText();
+                });
+            });
+            
+            tabButtonsContainer.innerHTML = '';
+            tabContentsContainer.innerHTML = '';
+            
+            selectedCriteria.forEach((criterion, index) => {
+                // Tạo tab button
+                const tabButton = document.createElement('button');
+                tabButton.className = `tab-button ${index === 0 ? 'active' : ''}`;
+                tabButton.textContent = criterion;
+                tabButton.onclick = () => switchCriterionTab(criterion);
+                tabButtonsContainer.appendChild(tabButton);
+                
+                // Tạo tab content
+                const tabContent = document.createElement('div');
+                tabContent.className = `tab-content ${index === 0 ? 'active' : ''}`;
+                tabContent.id = `tab-${criterion.replace(/\s+/g, '-')}`;
+                
+                // Tạo bảng ma trận so sánh cho phương án
+                const n = selectedAlternatives.length;
+                const matrix = Array(n).fill().map(() => Array(n).fill(1));
+                alternativeMatrices[criterion] = matrix;
+                
+                tabContent.innerHTML = `
+                    <div class="overflow-x-auto mb-6">
+                        <table class="matrix-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    ${selectedAlternatives.map(alt => `<th>${alt}</th>`).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${selectedAlternatives.map((alt, i) => `
+                                    <tr>
+                                        <td class="font-semibold">${alt}</td>
+                                        ${Array(n).fill().map((_, j) => `
+                                            <td id="${criterion}-cell-${i}-${j}">
+                                                ${i === j ? '1' : ''}
+                                            </td>
+                                        `).join('')}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="${criterion}-consistency-info" class="text-sm p-3 mb-4 bg-gray-50 rounded hidden">
+                        <!-- Consistency info will be shown here -->
+                    </div>
+                `;
+                
+                tabContentsContainer.appendChild(tabContent);
+            });
+            
+            // Hiển thị phần so sánh phương án
+            document.getElementById('step3a').classList.remove('hidden');
+            
+            // Bắt đầu so sánh phương án cho tiêu chí đầu tiên
+            currentCriterion = selectedCriteria[0];
+            currentAlternativeComparison = { i: 0, j: 0 };
+            startNextAlternativeComparison();
+        }
+
+        function switchCriterionTab(criterion) {
+            // Ẩn tất cả các tab
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            
+            // Hiển thị tab được chọn
+            document.querySelector(`#tab-${criterion.replace(/\s+/g, '-')}`).classList.add('active');
+            
+            // Tìm và active button tương ứng
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                if (btn.textContent === criterion) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Cập nhật tiêu chí hiện tại
+            currentCriterion = criterion;
+            currentAlternativeComparison = { i: 0, j: 0 };
+            startNextAlternativeComparison();
+        }
+
+        function startNextAlternativeComparison() {
+            const n = selectedAlternatives.length;
+            const matrix = alternativeMatrices[currentCriterion];
+            
+            // Kiểm tra xem matrix có phải là một mảng hay không
+            if (!Array.isArray(matrix)) {
+                // Nếu đã có kết quả tính toán trước đó, chuyển sang tiêu chí tiếp theo
+                const nextIndex = selectedCriteria.indexOf(currentCriterion) + 1;
+                if (nextIndex < selectedCriteria.length) {
+                    switchCriterionTab(selectedCriteria[nextIndex]);
+                } else {
+                    // Đã hoàn thành tất cả, ẩn phần so sánh
+                    document.getElementById('alternativeComparisonPrompt').classList.add('hidden');
+                }
+                return;
+            }
+            
+            // Kiểm tra xem matrix đã hoàn thành chưa
+            let isMatrixComplete = true;
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < i; j++) {
+                    if (!matrix[i][j]) {
+                        currentAlternativeComparison = { i, j };
+                        isMatrixComplete = false;
+                        break;
+                    }
+                }
+                if (!isMatrixComplete) break;
+            }
+            
+            if (isMatrixComplete) {
+                // Tính toán độ nhất quán cho tiêu chí hiện tại
+                calculateAlternativeWeights(currentCriterion);
+                return;
+            }
+            
+            // Reset giá trị Saaty 
+            document.querySelectorAll('.alt-saaty-value-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === '1') {
+                    btn.classList.add('active');
+                }
+            });
+            currentAltSaatyValue = "1";
+            document.getElementById('alternativeComparisonValue').textContent = currentAltSaatyValue;
+            
+            // Hiển thị câu hỏi so sánh tiếp theo
+            updateAlternativeComparisonText();
+            document.getElementById('alternativeComparisonPrompt').classList.remove('hidden');
+        }
+
+        function submitAlternativeComparison() {
+            const i = currentAlternativeComparison.i;
+            const j = currentAlternativeComparison.j;
+            const criterion = currentCriterion;
+            
+            // Lấy giá trị Saaty đã chọn
+            const selectedValue = currentAltSaatyValue;
+            
+            // Kiểm tra tính hợp lệ của giá trị
+            try {
+                const numericValue = fractionToNumber(selectedValue);
+                if (numericValue <= 0) {
+                    alert('Giá trị không hợp lệ: phải lớn hơn 0');
+                    return;
+                }
+            } catch (error) {
+                alert('Giá trị không hợp lệ');
+                return;
+            }
+            
+            // Cập nhật ma trận
+            alternativeMatrices[criterion][i][j] = selectedValue;
+            
+            // Cập nhật giá trị ngược (nghịch đảo)
+            if (selectedValue === '1') {
+                alternativeMatrices[criterion][j][i] = '1';
+            } else if (selectedValue.includes('/')) {
+                // Nếu là phân số dạng 1/x, thì đảo ngược thành x
+                const denominator = selectedValue.split('/')[1];
+                alternativeMatrices[criterion][j][i] = denominator;
+            } else {
+                // Nếu là số x, thì đảo ngược thành 1/x
+                alternativeMatrices[criterion][j][i] = `1/${selectedValue}`;
+            }
+            
+            // Cập nhật giao diện
+            const cell_i_j = document.getElementById(`${criterion}-cell-${i}-${j}`);
+            const cell_j_i = document.getElementById(`${criterion}-cell-${j}-${i}`);
+            
+            if (cell_i_j) {
+                cell_i_j.textContent = selectedValue;
+                
+                // Xóa lớp highlight và animation
+                cell_i_j.classList.remove('matrix-cell-highlight', 'animate-pulse');
+                
+                // Thêm hiệu ứng flash để hiển thị giá trị đã được cập nhật
+                cell_i_j.classList.add('bg-green-100');
+                setTimeout(() => {
+                    cell_i_j.classList.remove('bg-green-100');
+                }, 500);
+            }
+            
+            if (cell_j_i) {
+                if (selectedValue === '1') {
+                    cell_j_i.textContent = '1';
+                } else if (selectedValue.includes('/')) {
+                    const denominator = selectedValue.split('/')[1];
+                    cell_j_i.textContent = denominator;
+                } else {
+                    cell_j_i.textContent = `1/${selectedValue}`;
+                }
+                
+                // Thêm hiệu ứng flash cho ô đối xứng
+                cell_j_i.classList.add('bg-green-100');
+                setTimeout(() => {
+                    cell_j_i.classList.remove('bg-green-100');
+                }, 500);
+            }
+            
+            // Xóa thông báo thông tin về tiêu chí đang chỉnh sửa
+            const infoMessage = document.querySelector('#alternativeComparisonPrompt > div.bg-blue-50');
+            if (infoMessage) {
+                infoMessage.remove();
+            }
+            
+            // Ẩn phần so sánh sau khi hoàn thành
+            document.getElementById('alternativeComparisonPrompt').classList.add('hidden');
+        }
+
+        async function calculateAlternativeWeights(criterion) {
+            try {
+                const matrix = alternativeMatrices[criterion];
+                
+                // Kiểm tra xem ma trận đã có kết quả tính toán trước đó hay chưa
+                if (matrix.weights) {
+                    console.log(`Ma trận ${criterion} đã có kết quả tính toán trước đó`);
+                    return;
+                }
+                
+                // Hiển thị đang xử lý
+                const consistencyInfo = document.getElementById(`${criterion}-consistency-info`);
+                consistencyInfo.innerHTML = `
+                    <div class="flex items-center">
+                        <div class="animate-spin mr-2 h-4 w-4 border-2 border-blue-600 rounded-full border-t-transparent"></div>
+                        <p>Đang tính toán độ nhất quán...</p>
+                    </div>
+                `;
+                consistencyInfo.classList.remove('hidden');
+                
+                // Chuyển đổi ma trận từ dạng phân số sang số thực trước khi gửi
+                const numericMatrix = matrix.map(row => 
+                    row.map(value => {
+                        try {
+                            return fractionToNumber(value);
+                        } catch (error) {
+                            console.error(`Lỗi chuyển đổi giá trị ${value}:`, error);
+                            return 1; // Giá trị mặc định an toàn
+                        }
+                    })
+                );
+                
+                const response = await fetch('/calculate_ahp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ matrix: numericMatrix })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Lỗi từ server');
+                }
+                
+                const result = await response.json();
+                
+                // Hiển thị kết quả tính toán
+                consistencyInfo.innerHTML = `
+                    <p>Tỷ số nhất quán (CR): ${result.cr.toFixed(4)}</p>
+                    <p class="${0 < result.cr && result.cr < 0.1 ? 'text-green-600' : 'text-red-600'}">
+                        ${0 < result.cr && result.cr < 0.1 ? 'Độ nhất quán đạt chuẩn' : result.cr === 0 ? 'Ma trận hoàn hảo (cần có sự khác biệt)' : 'Độ nhất quán không đảm bảo'}
+                    </p>
+                    <div class="mt-3">
+                        <p class="font-medium">Trọng số các phương án theo tiêu chí "${criterion}":</p>
+                        <ul class="mt-2 space-y-1">
+                            ${result.weights.map((weight, i) => `
+                                <li class="flex justify-between">
+                                    <span>${selectedAlternatives[i]}</span> 
+                                    <span class="font-medium">${weight.toFixed(4)}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+                consistencyInfo.classList.remove('hidden');
+                
+                if (result.cr === 0 || result.cr > 0.1) {
+                    if (confirm(`Tỷ số nhất quán (CR) = ${result.cr.toFixed(4)} ${result.cr === 0 ? '= 0 (ma trận hoàn hảo cần có sự khác biệt)' : '> 0.1'} cho tiêu chí "${criterion}". Bạn có muốn nhập lại ma trận so sánh?`)) {
+                        // Reset ma trận cho tiêu chí hiện tại
+                        resetAlternativeMatrix(criterion);
+                        return;
+                    }
+                }
+                
+                // Lưu trữ kết quả tính toán cho tiêu chí hiện tại
+                alternativeMatrices[criterion] = {
+                    matrix,
+                    weights: result.weights,
+                    cr: result.cr
+                };
+                
+                // Hiển thị nút tiếp tục
+                const buttonContainer = document.createElement('div');
+                buttonContainer.className = 'text-center mt-4';
+                buttonContainer.innerHTML = `
+                    <button onclick="switchToNextCriterion('${criterion}')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                        Tiếp Tục Với Tiêu Chí Tiếp Theo
+                    </button>
+                `;
+                consistencyInfo.appendChild(buttonContainer);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                const consistencyInfo = document.getElementById(`${criterion}-consistency-info`);
+                consistencyInfo.innerHTML = `
+                    <p class="text-red-600">Có lỗi xảy ra khi tính toán trọng số: ${error.message}</p>
+                    <button onclick="calculateAlternativeWeights('${criterion}')" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                        Thử Lại
+                    </button>
+                `;
+                consistencyInfo.classList.remove('hidden');
+            }
+        }
+        
+        function switchToNextCriterion(currentCriterion) {
+            // Tìm tiêu chí tiếp theo
+            const nextIndex = selectedCriteria.indexOf(currentCriterion) + 1;
+            if (nextIndex < selectedCriteria.length) {
+                switchCriterionTab(selectedCriteria[nextIndex]);
+            } else {
+                // Đã hoàn thành tất cả tiêu chí
+                document.getElementById('alternativeComparisonPrompt').classList.add('hidden');
+                alert('Bạn đã hoàn thành đánh giá tất cả các tiêu chí. Bấm "Tổng Hợp Kết Quả" để xem kết quả cuối cùng.');
+            }
+        }
+        
+        function resetAlternativeMatrix(criterion) {
+            const n = selectedAlternatives.length;
+            alternativeMatrices[criterion] = Array(n).fill().map(() => Array(n).fill(1));
+            
+            // Cập nhật hiển thị ma trận
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    const cell = document.getElementById(`${criterion}-cell-${i}-${j}`);
+                    if (i === j) {
+                        cell.textContent = '1';
+                    } else {
+                        cell.textContent = '';
+                    }
+                }
+            }
+            
+            // Ẩn thông tin độ nhất quán
+            document.getElementById(`${criterion}-consistency-info`).classList.add('hidden');
+            
+            // Bắt đầu lại quá trình so sánh
+            currentAlternativeComparison = { i: 0, j: 0 };
+            startNextAlternativeComparison();
+        }
+        
+        async function calculateAllWeights() {
+            // Hiển thị thông báo đang xử lý
+            const loadingMsg = document.createElement('div');
+            loadingMsg.id = 'weights-calculation-progress';
+            loadingMsg.className = 'fixed top-0 left-0 w-full bg-blue-600 text-white p-3 text-center';
+            loadingMsg.innerHTML = 'Đang tính toán trọng số cho tất cả tiêu chí...';
+            document.body.appendChild(loadingMsg);
+            
+            try {
+                // Tạo danh sách promise cho tất cả tiêu chí
+                const promises = [];
+                
+                for (const criterion of selectedCriteria) {
+                    // Bỏ qua tiêu chí đã có kết quả tính toán
+                    if (alternativeMatrices[criterion].weights) {
+                        continue;
+                    }
+                    
+                    const matrix = alternativeMatrices[criterion];
+                    
+                    // Chuyển đổi ma trận từ dạng phân số sang số thực
+                    const numericMatrix = matrix.map(row => 
+                        row.map(value => {
+                            try {
+                                return fractionToNumber(value);
+                            } catch (error) {
+                                console.error(`Lỗi chuyển đổi giá trị ${value}:`, error);
+                                return 1; // Giá trị mặc định an toàn
+                            }
+                        })
+                    );
+                    
+                    // Tạo promise để gửi yêu cầu tính toán
+                    const promise = fetch('/calculate_ahp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ matrix: numericMatrix })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.error || 'Lỗi từ server');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(result => {
+                        // Lưu trữ kết quả tính toán
+                        alternativeMatrices[criterion] = {
+                            matrix,
+                            weights: result.weights,
+                            cr: result.cr
+                        };
+                        
+                        // Cập nhật hiển thị kết quả
+                        const consistencyInfo = document.getElementById(`${criterion}-consistency-info`);
+                        if (consistencyInfo) {
+                            consistencyInfo.innerHTML = `
+                                <p>Tỷ số nhất quán (CR): ${result.cr.toFixed(4)}</p>
+                                <p class="${0 < result.cr && result.cr < 0.1 ? 'text-green-600' : 'text-red-600'}">
+                                    ${0 < result.cr && result.cr < 0.1 ? 'Độ nhất quán đạt chuẩn' : result.cr === 0 ? 'Ma trận hoàn hảo (cần có sự khác biệt)' : 'Độ nhất quán không đảm bảo'}
+                                </p>
+                                <div class="mt-3">
+                                    <p class="font-medium">Trọng số các phương án theo tiêu chí "${criterion}":</p>
+                                    <ul class="mt-2 space-y-1">
+                                        ${result.weights.map((weight, i) => `
+                                            <li class="flex justify-between">
+                                                <span>${selectedAlternatives[i]}</span> 
+                                                <span class="font-medium">${weight.toFixed(4)}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
+                                </div>
+                            `;
+                            consistencyInfo.classList.remove('hidden');
+                        }
+                        
+                        return { criterion, cr: result.cr };
+                    });
+                    
+                    promises.push(promise);
+                }
+                
+                // Chờ tất cả các yêu cầu hoàn thành
+                const results = await Promise.all(promises);
+                
+                // Xóa thông báo đang xử lý
+                document.body.removeChild(loadingMsg);
+                
+                // Kiểm tra xem có tiêu chí nào không đạt chuẩn CR không
+                const invalidCriteria = results.filter(r => r.cr === 0 || r.cr > 0.1);
+                if (invalidCriteria.length > 0) {
+                    const criteriaNames = invalidCriteria.map(r => r.criterion).join(", ");
+                    const alert_message = `Các tiêu chí sau có tỷ số nhất quán không đạt chuẩn (CR=0 hoặc CR>0.1): ${criteriaNames}.\n\nBạn có thể điều chỉnh các giá trị trong ma trận để cải thiện độ nhất quán.`;
+                    alert(alert_message);
+                } else {
+                    alert('Đã tính toán trọng số cho tất cả tiêu chí thành công!');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                // Xóa thông báo đang xử lý
+                if (document.getElementById('weights-calculation-progress')) {
+                    document.body.removeChild(loadingMsg);
+                }
+                alert(`Có lỗi xảy ra khi tính toán trọng số: ${error.message}`);
+            }
+        }
+
+        async function calculateFinalResults() {
+            try {
+                // Kiểm tra xem đã hoàn thành so sánh cho tất cả các tiêu chí chưa
+                const criteriaWithoutResults = selectedCriteria.filter(criterion => {
+                    const matrix = alternativeMatrices[criterion];
+                    return !matrix || !matrix.weights; // Kiểm tra nếu không có ma trận hoặc không có trọng số
+                });
+                
+                if (criteriaWithoutResults.length > 0) {
+                    alert(`Vui lòng hoàn thành so sánh cho các tiêu chí: ${criteriaWithoutResults.join(', ')}`);
+                    return;
+                }
+                
+                // Chuẩn bị dữ liệu gửi đến server
+                const processedMatrices = {};
+                
+                // Chuyển đổi tất cả các giá trị phân số thành số thực trước khi gửi
+                for (const criterion in alternativeMatrices) {
+                    if (alternativeMatrices[criterion].matrix) {
+                        // Đã có kết quả tính toán, giữ nguyên
+                        processedMatrices[criterion] = alternativeMatrices[criterion];
+                    } else {
+                        // Cần chuyển đổi ma trận phân số thành số thực
+                        const matrix = alternativeMatrices[criterion];
+                        const numericMatrix = matrix.map(row => 
+                            row.map(value => {
+                                if (typeof value === 'string' && value.includes('/')) {
+                                    return fractionToNumber(value);
+                                }
+                                return Number(value);
+                            })
+                        );
+                        processedMatrices[criterion] = numericMatrix;
+                    }
+                }
+                
+                const data = {
+                    criteria: selectedCriteria,
+                    alternatives: selectedAlternatives,
+                    matrices: processedMatrices,
+                    criteria_weights: criteriaWeights
+                };
+                
+                // Gửi yêu cầu tính toán
+                const response = await fetch('/calculate_alternative_matrices', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                showFinalResults(result);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra khi tính toán kết quả cuối cùng');
+            }
+        }
+
+        function showCalculationSteps(result) {
+            document.getElementById('step4').classList.remove('hidden');
+            
+            // 4.1. Tính tổng cột
+            const n = selectedCriteria.length;
+            const columnSums = Array(n).fill(0);
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    columnSums[i] += comparisonMatrix[j][i];
+                }
+            }
+            
+            document.getElementById('sumColumns').innerHTML = `
+                <table class="matrix-table">
+                    <tr>
+                        ${columnSums.map((sum, i) => `
+                            <td class="p-2 border text-center">${sum.toFixed(2)}</td>
+                        `).join('')}
+                    </tr>
+                </table>
+            `;
+
+            // 4.2. Ma trận chuẩn hóa
+            const normalizedMatrix = result.normalized_matrix;
+
+            document.getElementById('normalizedMatrix').innerHTML = `
+                <table class="matrix-table">
+                    ${normalizedMatrix.map((row, i) => `
+                        <tr>
+                            <td class="p-2 border font-semibold">${selectedCriteria[i]}</td>
+                            ${row.map(val => `
+                                <td class="p-2 border text-center">${val.toFixed(4)}</td>
+                            `).join('')}
+                        </tr>
+                    `).join('')}
+                </table>
+            `;
+
+            // 4.3. Trọng số các tiêu chí
+            const weights = result.weights;
+
+            document.getElementById('criteriaWeights').innerHTML = `
+                <table class="matrix-table">
+                    <tr>
+                        ${weights.map((weight, i) => `
+                            <td class="p-2 border text-center">
+                                <div class="font-semibold">${selectedCriteria[i]}</div>
+                                <div>${weight.toFixed(4)}</div>
+                            </td>
+                        `).join('')}
+                    </tr>
+                </table>
+            `;
+
+            // 4.4. Giá trị tổng trọng số
+            const weightedSums = Array(n).fill(0);
+            for (let i = 0; i < n; i++) {
+                for (let j = 0; j < n; j++) {
+                    weightedSums[i] += comparisonMatrix[i][j] * weights[j];
+                }
+            }
+
+            document.getElementById('weightedSums').innerHTML = `
+                <table class="matrix-table">
+                    <tr>
+                        ${weightedSums.map((sum, i) => `
+                            <td class="p-2 border text-center">
+                                <div class="font-semibold">${selectedCriteria[i]}</div>
+                                <div>${sum.toFixed(4)}</div>
+                            </td>
+                        `).join('')}
+                    </tr>
+                </table>
+            `;
+
+            // 4.5. Vector nhất quán
+            const consistencyVector = weightedSums.map((sum, i) => sum / weights[i]);
+
+            document.getElementById('consistencyVector').innerHTML = `
+                <table class="matrix-table">
+                    <tr>
+                        ${consistencyVector.map((val, i) => `
+                            <td class="p-2 border text-center">
+                                <div class="font-semibold">${selectedCriteria[i]}</div>
+                                <div>${val.toFixed(4)}</div>
+                            </td>
+                        `).join('')}
+                    </tr>
+                </table>
+            `;
+
+            // 4.6. Kiểm tra độ nhất quán
+            const lambdaMax = result.lambda_max;
+            const ci = result.ci;
+            // Sử dụng mảng ri_values đầy đủ như trên server
+            const ri_values = [0.00, 0.00, 0.58, 0.90, 1.12, 1.24, 1.32, 1.41, 1.45, 1.49, 1.51, 1.54, 1.56, 1.58, 1.59];
+            const ri = ri_values[n-1] || ri_values[ri_values.length-1];
+            // Sử dụng CR từ kết quả server
+            const cr = result.cr;
+
+            document.getElementById('consistencyCheck').innerHTML = `
+                <p>Lambda max: ${lambdaMax.toFixed(4)}</p>
+                <p>Chỉ số nhất quán (CI): ${ci.toFixed(4)}</p>
+                <p>Chỉ số ngẫu nhiên (RI): ${ri.toFixed(2)}</p>
+                <p>Tỷ số nhất quán (CR): ${cr.toFixed(4)}</p>
+                <p class="font-semibold ${cr < 0.1 ? 'text-green-600' : 'text-red-600'}">
+                    ${cr < 0.1 ? 'Ma trận so sánh có độ nhất quán chấp nhận được' : 'Ma trận so sánh không đủ nhất quán, cân nhắc xem xét lại các đánh giá'}
+                </p>
+            `;
+
+            // Hiển thị kết quả trọng số tiêu chí
+            document.getElementById('step5').classList.remove('hidden');
+            
+            // Vẽ biểu đồ trọng số
+            if (weightsChart) {
+                weightsChart.destroy();
+            }
+            const ctx = document.getElementById('weightsChart').getContext('2d');
+            weightsChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: selectedCriteria,
+                    datasets: [{
+                        label: 'Trọng Số',
+                        data: weights,
+                        backgroundColor: 'rgba(59, 130, 246, 0.5)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }
+                }
+            });
+
+            // Hiển thị thông tin độ nhất quán
+            document.getElementById('consistencyInfo').innerHTML = `
+                <p>Lambda max: ${lambdaMax.toFixed(4)}</p>
+                <p>Chỉ số nhất quán (CI): ${ci.toFixed(4)}</p>
+                <p>Chỉ số ngẫu nhiên (RI): ${ri.toFixed(2)}</p>
+                <p>Tỷ số nhất quán (CR): ${cr.toFixed(4)}</p>
+                <p class="font-semibold ${cr < 0.1 ? 'text-green-600' : 'text-red-600'}">
+                    ${cr < 0.1 ? 'Ma trận so sánh có độ nhất quán chấp nhận được' : 'Ma trận so sánh không đủ nhất quán, cân nhắc xem xét lại các đánh giá'}
+                </p>
+            `;
+        }
+
+        function showFinalResults(results) {
+            // Hiển thị trọng số các phương án theo từng tiêu chí
+            const altWeightsContainer = document.getElementById('alternativeWeightsBycriterion');
+            altWeightsContainer.innerHTML = '';
+            
+            Object.keys(results.alt_matrices_results).forEach(criterion => {
+                const chartContainer = document.createElement('div');
+                chartContainer.className = 'result-card';
+                
+                // Tạo canvas cho biểu đồ
+                const canvas = document.createElement('canvas');
+                canvas.id = `chart-${criterion.replace(/\s+/g, '-')}`;
+                
+                // Tạo tiêu đề
+                const title = document.createElement('h4');
+                title.className = 'font-semibold mb-2';
+                title.innerHTML = `Tiêu chí: ${criterion} <span class="text-sm text-gray-600">(CR: ${results.alt_matrices_results[criterion].cr.toFixed(4)})</span>`;
+                
+                chartContainer.appendChild(title);
+                chartContainer.appendChild(canvas);
+                altWeightsContainer.appendChild(chartContainer);
+                
+                // Vẽ biểu đồ
+                const ctx = canvas.getContext('2d');
+                const altWeights = results.alt_matrices_results[criterion].alternatives;
+                
+                alternativeWeightsCharts[criterion] = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(altWeights),
+                        datasets: [{
+                            label: 'Trọng Số',
+                            data: Object.values(altWeights),
+                            backgroundColor: 'rgba(52, 211, 153, 0.5)'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 1
+                            }
+                        }
+                    }
+                });
+            });
+            
+            // Hiển thị điểm số cuối cùng
+            const finalScores = results.final_scores;
+            const scoreEntries = Object.entries(finalScores);
+            
+            // Sắp xếp theo điểm số giảm dần
+            scoreEntries.sort((a, b) => b[1] - a[1]);
+            
+            // Vẽ biểu đồ điểm số cuối cùng
+            if (finalScoresChart) {
+                finalScoresChart.destroy();
+            }
+            
+            const ctx = document.getElementById('finalScoresChart').getContext('2d');
+            finalScoresChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: scoreEntries.map(entry => entry[0]),
+                    datasets: [{
+                        label: 'Điểm Số',
+                        data: scoreEntries.map(entry => entry[1]),
+                        backgroundColor: 'rgba(99, 102, 241, 0.5)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    indexAxis: 'y',
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 1
+                        }
+                    }
+                }
+            });
+            
+            // Hiển thị bảng điểm số
+            const finalScoresBody = document.getElementById('finalScoresBody');
+            finalScoresBody.innerHTML = scoreEntries.map((entry, index) => `
+                <tr>
+                    <td class="p-2 border font-semibold">${entry[0]}</td>
+                    <td class="p-2 border text-center">${entry[1].toFixed(4)}</td>
+                    <td class="p-2 border text-center ${index === 0 ? 'bg-green-100 font-bold' : ''}">${index + 1}</td>
+                </tr>
+            `).join('');
+            
+            // Cuộn xuống kết quả cuối cùng
+            document.getElementById('step5').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function startAutomaticComparison(criterion) {
+            currentCriterion = criterion;
+            currentAlternativeComparison = { i: 0, j: 0 };
+            
+            // Thêm nút vào phần so sánh để chuyển sang cặp tiếp theo
+            if (!document.querySelector('#startNextComparisonBtn')) {
+                const compareDiv = document.getElementById('alternativeComparisonPrompt');
+                const buttonDiv = compareDiv.querySelector('.text-center');
+                const nextButton = document.createElement('button');
+                nextButton.id = 'startNextComparisonBtn';
+                nextButton.className = 'bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 ml-2';
+                nextButton.textContent = 'Cặp Tiếp Theo';
+                nextButton.onclick = function() {
+                    startNextAlternativeComparison();
+                };
+                buttonDiv.appendChild(nextButton);
+            }
+            
+            startNextAlternativeComparison();
+        }
+
+        // Show matrices for alternatives
+        function showAlternativeMatrices(data) {
+            // Updating process steps
+            document.getElementById('processStep1').classList.add('completed');
+            document.getElementById('processStep2').classList.add('completed');
+            document.getElementById('processStep3').classList.add('completed');
+            document.getElementById('processStep3a').classList.add('active');
+        }
+
+        // Create chart for alternative weights with enhanced animations
+        function createEnhancedWeightsChart(criterion, weights) {
+            const ctx = document.getElementById(`alternativeWeightsChart-${criterion}`).getContext('2d');
+            
+            // Create gradient background
+            const gradientBg = ctx.createLinearGradient(0, 0, 0, 400);
+            gradientBg.addColorStop(0, 'rgba(79, 70, 229, 0.8)');
+            gradientBg.addColorStop(1, 'rgba(79, 70, 229, 0.2)');
+            
+            // Create weights chart with animations
+            const chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: selectedAlternatives,
+                    datasets: [{
+                        label: 'Trọng số',
+                        data: weights.map(w => parseFloat((w * 100).toFixed(1))),
+                        backgroundColor: gradientBg,
+                        borderColor: 'rgba(79, 70, 229, 1)',
+                        borderWidth: 1,
+                        borderRadius: 4,
+                        hoverBackgroundColor: 'rgba(67, 56, 202, 0.7)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1500,
+                        easing: 'easeOutQuart'
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            return chart;
+        }
+
+        // Update AHP process visualization
+        function updateAhpProcessVisualization(currentStep) {
+            // Reset all steps
+            const allSteps = ['processStep1', 'processStep2', 'processStep3', 'processStep3a', 'processStep4'];
+            
+            allSteps.forEach((stepId, index) => {
+                const stepElement = document.getElementById(stepId);
+                
+                // Reset classes
+                stepElement.classList.remove('active', 'completed');
+                
+                // Mark previous steps as completed
+                if (index < currentStep) {
+                    stepElement.classList.add('completed');
+                }
+                
+                // Mark current step as active
+                if (index === currentStep) {
+                    stepElement.classList.add('active');
+                }
+            });
+            
+            // Add animation
+            document.getElementById(allSteps[currentStep]).querySelector('.ahp-step-circle').classList.add('animate-pulse');
+            
+            // Scroll to the process visualization if needed
+            const processElement = document.querySelector('.ahp-process');
+            processElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Tính toán kết quả cho tất cả ma trận
+        async function calculateAllMatrices() {
+            // Hiển thị thông báo đang xử lý
+            const processingDiv = document.createElement('div');
+            processingDiv.id = 'calculatingAllMatrices';
+            processingDiv.className = 'fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50';
+            processingDiv.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-lg max-w-md text-center">
+                    <div class="animate-spin mx-auto mb-4 h-12 w-12 border-4 border-blue-600 rounded-full border-t-transparent"></div>
+                    <h3 class="text-xl font-semibold mb-2">Đang tính toán...</h3>
+                    <p class="text-gray-600" id="processingMatrixName">Xử lý ma trận...</p>
+                </div>
+            `;
+            document.body.appendChild(processingDiv);
+            
+            // Xử lý từng tiêu chí
+            let hasError = false;
+            for (const criterion of selectedCriteria) {
+                const matrix = alternativeMatrices[criterion];
+                
+                // Bỏ qua các ma trận đã có kết quả tính toán
+                if (matrix.weights) continue;
+                
+                // Cập nhật thông báo đang xử lý
+                document.getElementById('processingMatrixName').textContent = `Đang xử lý ma trận cho tiêu chí "${criterion}"`;
+                
+                try {
+                    // Chuyển đổi ma trận từ dạng phân số sang số thực
+                    const numericMatrix = matrix.map(row => 
+                        row.map(value => {
+                            try {
+                                return fractionToNumber(value);
+                            } catch (error) {
+                                console.error(`Lỗi chuyển đổi giá trị ${value}:`, error);
+                                return 1;
+                            }
+                        })
+                    );
+                    
+                    // Gọi API tính toán
+                    const response = await fetch('/calculate_ahp', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ matrix: numericMatrix })
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Lỗi từ server');
+                    }
+                    
+                    const result = await response.json();
+                    
+                    // Hiển thị kết quả
+                    const consistencyInfo = document.getElementById(`${criterion}-consistency-info`);
+                    consistencyInfo.innerHTML = `
+                        <div class="p-3 bg-blue-50 rounded-md">
+                            <h4 class="font-semibold mb-2">Kết quả tính toán độ nhất quán</h4>
+                            <p>Tỷ số nhất quán (CR): <span class="${0 < result.cr && result.cr < 0.1 ? 'text-green-600 font-semibold' : 'text-orange-600 font-semibold'}">${result.cr.toFixed(4)}</span></p>
+                            <p class="${0 < result.cr && result.cr < 0.1 ? 'text-green-600' : 'text-orange-600'}">
+                                ${0 < result.cr && result.cr < 0.1 ? '✓ Độ nhất quán đạt chuẩn' : result.cr === 0 ? '⚠️ Ma trận hoàn hảo (cần có sự khác biệt)' : '⚠️ Độ nhất quán không đảm bảo'}
+                            </p>
+                        </div>
+                        
+                        <div class="mt-4">
+                            <h4 class="font-semibold mb-3">Trọng số các phương án theo tiêu chí "${criterion}":</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div class="bg-gray-50 p-4 rounded-lg">
+                                        <table class="w-full">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-left text-gray-700">Phương án</th>
+                                                    <th class="text-center text-gray-700">Trọng số</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${result.weights.map((weight, i) => `
+                                                    <tr>
+                                                        <td class="py-2">${selectedAlternatives[i]}</td>
+                                                        <td class="py-2 text-center font-medium text-blue-700">${(weight * 100).toFixed(1)}%</td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div>
+                                    <canvas id="alternativeWeightsChart-${criterion}" width="300" height="200" class="mt-2"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    consistencyInfo.classList.remove('hidden');
+                    
+                    // Tạo biểu đồ
+                    createEnhancedWeightsChart(criterion, result.weights);
+                    
+                    // Lưu kết quả
+                    alternativeMatrices[criterion] = {
+                        matrix,
+                        weights: result.weights,
+                        cr: result.cr
+                    };
+                    
+                    // Đợi một chút để tránh quá tải server
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    
+                } catch (error) {
+                    console.error(`Error calculating weights for ${criterion}:`, error);
+                    const consistencyInfo = document.getElementById(`${criterion}-consistency-info`);
+                    consistencyInfo.innerHTML = `
+                        <div class="p-3 bg-red-50 rounded-md">
+                            <p class="text-red-600">Có lỗi xảy ra khi tính toán trọng số: ${error.message}</p>
+                            <button onclick="calculateAlternativeWeights('${criterion}')" class="mt-2 bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                Thử Lại
+                            </button>
+                        </div>
+                    `;
+                    consistencyInfo.classList.remove('hidden');
+                    hasError = true;
+                }
+            }
+            
+            // Xóa thông báo đang xử lý
+            document.getElementById('calculatingAllMatrices').remove();
+            
+            // Hiển thị thông báo hoàn thành
+            if (!hasError) {
+                // Thêm nút tính điểm cuối cùng
+                const completeMessage = document.createElement('div');
+                completeMessage.className = 'p-4 bg-green-50 text-green-800 rounded-lg shadow-md fixed bottom-4 right-4 z-50 animate-fade-in';
+                completeMessage.innerHTML = `
+                    <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <p class="font-medium">Đã hoàn thành tính toán trọng số cho tất cả tiêu chí</p>
+                    </div>
+                `;
+                document.body.appendChild(completeMessage);
+                
+                // Tự động ẩn thông báo sau 3 giây
+                setTimeout(() => {
+                    completeMessage.classList.add('animate-fade-out');
+                    setTimeout(() => {
+                        completeMessage.remove();
+                    }, 500);
+                }, 3000);
+                
+                // Scroll đến nút tính điểm cuối cùng
+                document.querySelector('button[onclick="calculateFinalScores()"]').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+    </script>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Về chúng tôi</h3>
+                    <p>Nhóm 7 phát triển ứng dụng AHP kết hợp công nghệ LLM để hỗ trợ ra quyết định quan trọng cho doanh nghiệp một cách chính xác và hiệu quả.</p>
+                    <div class="social-links">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Liên kết nhanh</h3>
+                    <ul>
+                        <li><a href="#">Trang chủ</a></li>
+                        <li><a href="#">Phương pháp AHP</a></li>
+                        <li><a href="#">Ứng dụng LLM</a></li>
+                        <li><a href="#">Tài liệu hướng dẫn</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Tài nguyên</h3>
+                    <ul>
+                        <li><a href="#">Hướng dẫn sử dụng</a></li>
+                        <li><a href="#">Bài viết học thuật</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Liên hệ</h3>
+                    <p><i class="fas fa-envelope mr-2"></i> ahp@example.com</p>
+                    <p><i class="fas fa-phone mr-2"></i> +84 123 456 789</p>
+                    <p><i class="fas fa-map-marker-alt mr-2"></i> 268 Lý Thường Kiệt, P.14, Q.10, TP.HCM</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 AHP Decision System - Nhóm 7. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html> 

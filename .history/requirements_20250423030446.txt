@@ -1,0 +1,9 @@
+flask==3.0.2
+requests==2.31.0
+numpy==1.26.4
+python-dotenv==1.0.1
+gunicorn==21.2.0
+flask-sqlalchemy==3.1.1
+psycopg2-binary==2.9.9 
+openai==0.27.0
+pyngrok==7.1.0

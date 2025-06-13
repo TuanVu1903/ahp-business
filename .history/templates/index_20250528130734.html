@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhóm 7: Ứng Dụng LLM để hỗ trợ ra quyết định quan trọng của doanh nghiệp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Color Palette System - Professional, Scientific UI */
+        :root {
+            /* Primary Colors - Main UI (60%) */
+            --primary-50: #eef2ff;
+            --primary-100: #e0e7ff;
+            --primary-200: #c7d2fe;
+            --primary-300: #a5b4fc;
+            --primary-400: #818cf8;
+            --primary-500: #6366f1; /* Main Brand Color */
+            --primary-600: #4f46e5;
+            --primary-700: #4338ca;
+            --primary-800: #3730a3;
+            --primary-900: #312e81;
+            --primary-950: #1e1b4b;
+            
+            /* Secondary Colors - Supporting Elements (30%) */
+            --secondary-50: #f0f9ff;
+            --secondary-100: #e0f2fe;
+            --secondary-200: #bae6fd;
+            --secondary-300: #7dd3fc;
+            --secondary-400: #38bdf8;
+            --secondary-500: #0ea5e9;
+            --secondary-600: #0284c7;
+            --secondary-700: #0369a1;
+            --secondary-800: #075985;
+            --secondary-900: #0c4a6e;
+            --secondary-950: #082f49;
+            
+            /* Accent Colors - Highlights (10%) */
+            --accent-50: #ecfdf5;
+            --accent-100: #d1fae5;
+            --accent-200: #a7f3d0;
+            --accent-300: #6ee7b7;
+            --accent-400: #34d399;
+            --accent-500: #10b981;
+            --accent-600: #059669;
+            --accent-700: #047857;
+            --accent-800: #065f46;
+            --accent-900: #064e3b;
+            --accent-950: #022c22;
+            
+            /* Status Colors */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            
+            /* Neutral Colors - Text, Backgrounds */
+            --neutral-50: #f9fafb;
+            --neutral-100: #f3f4f6;
+            --neutral-200: #e5e7eb;
+            --neutral-300: #d1d5db;
+            --neutral-400: #9ca3af;
+            --neutral-500: #6b7280;
+            --neutral-600: #4b5563;
+            --neutral-700: #374151;
+            --neutral-800: #1f2937;
+            --neutral-900: #111827;
+            --neutral-950: #030712;
+            
+            /* Component Colors */
+            --bg-body: var(--neutral-50);
+            --bg-card: white;
+            --bg-sidebar: white;
+            --bg-navbar: white;
+            --bg-button: var(--primary-600);
+            --bg-button-hover: var(--primary-700);
+            --bg-input: white;
+            --bg-tooltip: var(--neutral-800);
+            
+            --text-primary: var(--neutral-900);
+            --text-secondary: var(--neutral-700);
+            --text-tertiary: var(--neutral-500);
+            --text-on-dark: white;
+            --text-muted: var(--neutral-400);
+            
+            --border-color: var(--neutral-200);
+            --border-color-focus: var(--primary-500);
+            
+            /* Drop Shadows */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            
+            /* Spacing Variables */
+            --spacing-1: 0.25rem;
+            --spacing-2: 0.5rem;
+            --spacing-3: 0.75rem;
+            --spacing-4: 1rem;
+            --spacing-5: 1.25rem;
+            --spacing-6: 1.5rem;
+            --spacing-8: 2rem;
+            --spacing-10: 2.5rem;
+            --spacing-12: 3rem;
+            
+            /* Fonts */
+            --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            
+            /* Border Radius */
+            --radius-sm: 0.125rem;
+            --radius: 0.25rem;
+            --radius-md: 0.375rem;
+            --radius-lg: 0.5rem;
+            --radius-xl: 0.75rem;
+            --radius-2xl: 1rem;
+            --radius-3xl: 1.5rem;
+            --radius-full: 9999px;
+        }
+        
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        
+        .animate-slide-in {
+            animation: slideInRight 0.5s ease-out forwards;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .animate-gradient {
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+        }
+        
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-primary);
+            background-color: var(--bg-body);
+            line-height: 1.5;
+        }
+        
+        /* Professional Header Styles */
+        .site-header {
+            background: linear-gradient(135deg, var(--primary-700), var(--primary-900));
+            background-size: 200% 200%;
+            animation: gradient 15s ease infinite;
+            color: white;
+            padding: 1rem 0;
+            box-shadow: var(--shadow-lg);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background-color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+            color: var(--primary-700);
+            font-weight: bold;
+            font-size: 1.5rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-text h1 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+        }
+
+        .logo-text p {
+            margin: 0;
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+
+        .header-nav ul {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            opacity: 0.9;
+            transition: all 0.2s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+
+        .header-nav a:hover {
+            opacity: 1;
+        }
+
+        .header-nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s;
+        }
+
+        .header-nav a:hover::after {
+            width: 100%;
+        }
+        
+        /* Export buttons in header */
+        .export-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .export-btn {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 6px;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .export-btn:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+        
+        .export-btn svg {
+            width: 1.1rem;
+            height: 1.1rem;
+        }
+        
+        .export-btn.excel {
+            background-color: rgba(24, 160, 88, 0.7);
+        }
+        
+        .export-btn.excel:hover {
+            background-color: rgba(24, 160, 88, 0.9);
+        }
+        
+        .export-btn.pdf {
+            background-color: rgba(220, 53, 69, 0.7);
+        }
+        
+        .export-btn.pdf:hover {
+            background-color: rgba(220, 53, 69, 0.9);
+        }
+
+        /* Professional Footer Styles */
+        .site-footer {
+            background-color: var(--neutral-900);
+            color: var(--neutral-300);
+            padding: 3rem 0 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-section li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-section a {
+            color: var(--neutral-400);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-section p {
+            margin-top: 0;
+            line-height: 1.6;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background-color: var(--neutral-800);
+            color: var(--neutral-300);
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary-600);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid var(--neutral-800);
+            padding-top: 1.5rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--neutral-500);
+        }
+
+        /* AHP Process Visualization */
+        .ahp-process {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background-color: white;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .ahp-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .ahp-steps::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--neutral-200);
+            z-index: 0;
+        }
+
+        .ahp-step {
+            width: 50px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .ahp-step-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .ahp-step.active .ahp-step-circle {
+            background-color: var(--primary-500);
+            border-color: var(--primary-500);
+            color: white;
+            box-shadow: 0 0 0 5px rgba(99, 102, 241, 0.2);
+        }
+
+        .ahp-step.completed .ahp-step-circle {
+            background-color: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .ahp-step-name {
+            font-size: 0.75rem;
+            text-align: center;
+            color: var(--neutral-500);
+        }
+
+        .ahp-step.active .ahp-step-name {
+            color: var(--primary-700);
+            font-weight: 500;
+        }
+
+        .ahp-step.completed .ahp-step-name {
+            color: var(--success);
+        }
+
+        /* Enhanced Matrix Visualization */
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: white;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .matrix-table:hover {
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+        }
+        
+        .matrix-table th, .matrix-table td {
+            border: 1px solid var(--neutral-200);
+            padding: 0.875rem 1rem;
+            text-align: center;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .matrix-table th {
+            background: linear-gradient(to bottom, var(--primary-50), var(--primary-100));
+            font-weight: 600;
+            color: var(--primary-800);
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.85rem;
+        }
+        
+        .matrix-table th::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(to right, transparent, var(--primary-400), transparent);
+            transform: scaleX(0);
+            transition: transform 0.5s;
+        }
+        
+        .matrix-table th:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .matrix-table tr:nth-child(even) td {
+            background-color: var(--neutral-50);
+        }
+        
+        .matrix-table tr:hover td {
+            background-color: var(--primary-50);
+        }
+        
+        .matrix-table tr:first-child th:first-child {
+            border-top-left-radius: 12px;
+        }
+        
+        .matrix-table tr:first-child th:last-child {
+            border-top-right-radius: 12px;
+        }
+        
+        .matrix-table tr:last-child td:first-child {
+            border-bottom-left-radius: 12px;
+        }
+        
+        .matrix-table tr:last-child td:last-child {
+            border-bottom-right-radius: 12px;
+        }
+        
+        .matrix-comparison-value {
+            font-weight: 600;
+            color: var(--primary-700);
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+        }
+
+        .matrix-comparison-value::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 6px;
+            padding: 2px;
+            background: linear-gradient(to right, var(--primary-500), var(--secondary-500));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, 
+                          linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .matrix-comparison-value:hover::before {
+            opacity: 1;
+        }
+
+        .matrix-comparison-value:hover {
+            background-color: var(--primary-100) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .matrix-cell-highlight {
+            background-color: rgba(99, 102, 241, 0.1) !important;
+            border: 2px solid var(--primary-500) !important;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+        
+        .matrix-cell-highlight::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 6px;
+            background: linear-gradient(45deg, 
+                                        transparent 0%, 
+                                        rgba(99, 102, 241, 0.1) 25%, 
+                                        transparent 50%, 
+                                        rgba(99, 102, 241, 0.1) 75%, 
+                                        transparent 100%);
+            background-size: 200% 200%;
+            animation: shimmer 2s linear infinite;
+            pointer-events: none;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -100% 0; }
+            100% { background-position: 100% 0; }
+        }
+        
+        /* Matrix Input Styling */
+        .matrix-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            text-align: center;
+            transition: all 0.3s;
+            background-color: transparent;
+        }
+        
+        .matrix-input:focus {
+            outline: none;
+            border-color: var(--primary-400);
+            background-color: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+        
+        .matrix-input:hover:not(:focus) {
+            background-color: var(--primary-50);
+        }
+
+        /* Criterion tabs styling */
+        .criterion-tab {
+            transition: all 0.3s ease;
+            border-width: 1px;
+            border-color: var(--neutral-200);
+            font-weight: 500;
+        }
+
+        .criterion-tab:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Alternative weights visualizations */
+        .alt-weight-bar {
+            height: 24px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-700));
+            border-radius: 4px;
+            transition: width 1s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alt-weight-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255,255,255,0.2) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255,255,255,0.2) 50%,
+                rgba(255,255,255,0.2) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 20px 20px;
+            animation: animate-stripes 2s linear infinite;
+        }
+
+        @keyframes animate-stripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 0; }
+        }
+
+        /* Tabs */
+        .tab-button {
+            padding: 0.625rem 1rem;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background-color: var(--neutral-100);
+            color: var(--text-secondary);
+            margin-right: 0.25rem;
+            border: 1px solid transparent;
+        }
+        
+        .tab-button:hover {
+            background-color: var(--neutral-200);
+        }
+        
+        .tab-button.active {
+            background-color: white;
+            color: var(--primary-700);
+            border-color: var(--border-color);
+            border-bottom-color: white;
+            margin-bottom: -1px;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: var(--spacing-6);
+            border: 1px solid var(--border-color);
+            border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+            background-color: white;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Saaty Value Selectors */
+        .saaty-value-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin: 1.5rem 0;
+        }
+        
+        .saaty-value-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 85px;
+            transition: all 0.3s;
+        }
+        
+        .saaty-value-group:hover {
+            transform: translateY(-3px);
+        }
+        
+        .saaty-value-btn, .alt-saaty-value-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid var(--neutral-300);
+            background-color: white;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .saaty-value-btn::before, .alt-saaty-value-btn::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .saaty-value-btn:hover::before, .alt-saaty-value-btn:hover::before {
+            opacity: 1;
+        }
+        
+        .saaty-value-btn:hover, .alt-saaty-value-btn:hover {
+            border-color: var(--primary-500);
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .saaty-value-btn.active, .alt-saaty-value-btn.active {
+            background-color: var(--primary-600);
+            color: white;
+            border-color: var(--primary-600);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.3);
+        }
+        
+        .saaty-value-label {
+            font-size: 0.7rem;
+            text-align: center;
+            line-height: 1.2;
+            color: var(--text-secondary);
+            transition: color 0.3s;
+        }
+        
+        .saaty-value-group:hover .saaty-value-label {
+            color: var(--primary-700);
+        }
+        
+        /* Comparison Value */
+        .comparison-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--primary-700);
+            position: relative;
+        }
+        
+        .comparison-value::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-200), var(--primary-500), var(--primary-200));
+            border-radius: 2px;
+        }
+        
+        /* Results Section */
+        #finalResultsSection {
+            background-color: var(--neutral-50);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-6);
+            border: 1px solid var(--primary-100);
+        }
+        
+        .result-box {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-5);
+            margin-bottom: var(--spacing-4);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .result-box:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: var(--radius-full);
+            line-height: 1;
+        }
+        
+        .badge-success {
+            background-color: var(--accent-100);
+            color: var(--accent-800);
+        }
+        
+        .badge-warning {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .badge-danger {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+        
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        .progress-steps::before {
+            content: "";
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background-color: var(--neutral-200);
+            z-index: 0;
+        }
+        
+        .step {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            background-color: white;
+            border: 4px solid var(--neutral-300);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .step.active .step-circle {
+            border-color: var(--primary-600);
+            background-color: var(--primary-600);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.25);
+        }
+        
+        .step.completed .step-circle {
+            border-color: var(--accent-600);
+            background-color: var(--accent-600);
+            color: white;
+        }
+        
+        .step-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+            max-width: 120px;
+            color: var(--text-secondary);
+        }
+        
+        .step.active .step-label {
+            color: var(--primary-700);
+            font-weight: 600;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .animate-pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Form Fields */
+        .form-group {
+            margin-bottom: var(--spacing-6);
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: var(--spacing-2);
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            transition: all 0.15s ease-in-out;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-500);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+        
+        .form-text {
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        
+        /* File Upload Zone */
+        .file-drop-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-6);
+            text-align: center;
+            background-color: var(--neutral-50);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .file-drop-zone:hover {
+            border-color: var(--primary-400);
+            background-color: var(--primary-50);
+        }
+        
+        .file-drop-zone.drag-active {
+            border-color: var(--primary-500);
+            background-color: var(--primary-50);
+        }
+        
+        /* Loading Spinners */
+        .spinner {
+            border: 4px solid rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-600);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .matrix-cell-highlight {
+            background-color: rgba(99, 102, 241, 0.2) !important;
+            border: 2px solid var(--primary-500) !important;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .matrix-comparison-value:hover {
+            background-color: var(--primary-100) !important;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a1a1a1;
+        }
+        
+        /* Card hover effects */
+        .hover-card-rise {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        .hover-card-rise:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+        
+        /* Glassmorphism effects */
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Gradient text */
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary-600), var(--secondary-600));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+        
+        /* Smooth transition for inputs */
+        input, textarea, select {
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+            border-color: var(--primary-400) !important;
+        }
+        
+        /* Checkbox styling */
+        input[type="checkbox"] {
+            cursor: pointer;
+            position: relative;
+            width: 16px;
+            height: 16px;
+            appearance: none;
+            background-color: #fff;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin-right: 8px;
+            transition: all 0.3s;
+        }
+        
+        input[type="checkbox"]:checked {
+            background-color: var(--primary-600);
+            border-color: var(--primary-600);
+        }
+        
+        input[type="checkbox"]:checked::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 8px;
+            border-right: 2px solid white;
+            border-bottom: 2px solid white;
+            top: 2px;
+            left: 5px;
+            transform: rotate(45deg);
+        }
+        
+        /* Result card styling */
+        .result-card {
+            background: linear-gradient(145deg, #ffffff, #f5f7fa);
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Criteria labels */
+        .criteria-label {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: white;
+            border: 1px solid var(--primary-200);
+            border-left: 4px solid var(--primary-500);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .criteria-label:hover {
+            background-color: var(--primary-50);
+            transform: translateX(3px);
+        }
+        
+        /* Alternative labels */
+        .alternative-label {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: white;
+            border: 1px solid var(--secondary-200);
+            border-left: 4px solid var(--secondary-500);
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .alternative-label:hover {
+            background-color: var(--secondary-50);
+            transform: translateX(3px);
+        }
+    </style>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff', 
+                            200: '#c7d2fe',
+                            300: '#a5b4fc', 
+                            400: '#818cf8',
+                            500: '#6366f1', 
+                            600: '#4f46e5',
+                            700: '#4338ca', 
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        },
+                        secondary: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe', 
+                            200: '#bae6fd',
+                            300: '#7dd3fc', 
+                            400: '#38bdf8',
+                            500: '#0ea5e9', 
+                            600: '#0284c7',
+                            700: '#0369a1', 
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                        accent: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5', 
+                            200: '#a7f3d0',
+                            300: '#6ee7b7', 
+                            400: '#34d399',
+                            500: '#10b981', 
+                            600: '#059669',
+                            700: '#047857', 
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        card: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+                        'card-hover': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body>
+    <!-- Professional Header -->
+    <header class="site-header">
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <i class="fas fa-chart-pie"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>AHP Decision System</h1>
+                    <p>Hỗ trợ ra quyết định chuyên nghiệp</p>
+                </div>
+            </div>
+            <nav class="header-nav">
+                <ul>
+                    <li><a href="#" class="active"><i class="fas fa-home mr-1"></i> Trang chủ</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle mr-1"></i> Giới thiệu</a></li>
+                    <li><a href="#"><i class="fas fa-book mr-1"></i> Hướng dẫn</a></li>
+                    <li><a href="#"><i class="fas fa-question-circle mr-1"></i> Hỗ trợ</a></li>
+                </ul>
+            </nav>
+            <div class="export-buttons">
+                <button class="export-btn excel" onclick="exportToExcel()">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                    Xuất Excel
+                </button>
+                <button class="export-btn pdf" onclick="exportToPDF()">
+                    <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    Xuất PDF
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- AHP Process Visualization -->
+    <div class="container mx-auto px-4 pt-6">
+        <div class="ahp-process animate-fade-in backdrop-blur-sm bg-white/95 rounded-2xl shadow-xl p-8 border border-gray-100">
+            <h2 class="text-2xl font-bold mb-6 text-center text-primary-700 tracking-tight">Quy trình phân tích thứ bậc (AHP)</h2>
+            <div class="ahp-steps">
+                <div class="ahp-step active" id="processStep1">
+                    <div class="ahp-step-circle">1</div>
+                    <div class="ahp-step-name">Xác định<br>vấn đề</div>
+                </div>
+                <div class="ahp-step" id="processStep2">
+                    <div class="ahp-step-circle">2</div>
+                    <div class="ahp-step-name">Chọn tiêu chí<br>& phương án</div>
+                </div>
+                <div class="ahp-step" id="processStep3">
+                    <div class="ahp-step-circle">3</div>
+                    <div class="ahp-step-name">So sánh<br>tiêu chí</div>
+                </div>
+                <div class="ahp-step" id="processStep4">
+                    <div class="ahp-step-circle">4</div>
+                    <div class="ahp-step-name">So sánh<br>phương án</div>
+                </div>
+                <div class="ahp-step" id="processStep5">
+                    <div class="ahp-step-circle">5</div>
+                    <div class="ahp-step-name">Kết quả<br>tổng hợp</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-6">
+        <div class="bg-white rounded-xl shadow-xl overflow-hidden mb-8">
+            <div class="p-6">
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Hệ Hỗ Trợ Ra Quyết Định</h1>
+                <p class="text-lg text-gray-600">Ứng dụng phương pháp AHP (Analytic Hierarchy Process) để hỗ trợ quá trình ra quyết định</p>
+                
+                <!-- Thêm nút import excel ở đây -->
+                <div class="mt-4 flex space-x-4">
+                    <div>
+                        <button onclick="document.getElementById('importExcelModal').classList.remove('hidden')" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                <p class="text-gray-700 mb-4">Tải lên file Excel đã xuất ra từ hệ thống để hiển thị lại toàn bộ quy trình phân tích AHP.</p>
+                
+                <form id="importExcelForm" enctype="multipart/form-data">
+                    <div class="file-drop-zone" id="excelDropZone">
+                        <input type="file" id="excelFileInput" name="file" accept=".xlsx" class="hidden" onchange="handleExcelFileChange()">
+                        <div class="flex flex-col items-center justify-center py-6">
+                            <svg class="w-12 h-12 text-green-500 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <p class="text-gray-700 font-medium">Kéo thả file Excel hoặc</p>
+                            <button type="button" onclick="document.getElementById('excelFileInput').click()" class="mt-2 px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600">
+                                Chọn File
+                            </button>
+                            <p class="text-sm text-gray-500 mt-2">Chỉ chấp nhận file Excel (.xlsx)</p>
+                        </div>
+                        <div id="selectedExcelFile" class="hidden mt-4 p-3 bg-green-50 rounded-lg flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span id="excelFileName" class="text-sm text-green-800 truncate"></span>
+                            <button type="button" onclick="resetExcelFile()" class="ml-auto text-red-500 hover:text-red-700">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="importErrorMessage" class="hidden mt-4 p-3 bg-red-50 rounded-lg text-red-800 text-sm"></div>
+                    
+                    <div class="mt-6 flex justify-end space-x-3">
+                        <button type="button" onclick="document.getElementById('importExcelModal').classList.add('hidden')" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Hủy
+                        </button>
+                        <button type="button" onclick="importExcelFile()" id="importExcelButton" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <span id="importButtonText">Import</span>
+                            <span id="importButtonLoading" class="hidden">
+                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Đang xử lý...
+                            </span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>So sánh các phương án theo từng tiêu chí</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .matrix-container {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .matrix-table {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .matrix-table th, .matrix-table td {
+            text-align: center;
+            padding: 0.5rem;
+        }
+        .results-container {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+        .criterion-title {
+            color: #0d6efd;
+            margin-bottom: 1rem;
+        }
+        .final-results {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        .scale-guide {
+            margin: 1rem 0;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1 class="text-center mb-4">So sánh các phương án theo từng tiêu chí</h1>
+        
+        <div class="scale-guide">
+            <h5>Hướng dẫn thang điểm so sánh:</h5>
+            <ul>
+                <li>1: Hai phương án có tầm quan trọng như nhau</li>
+                <li>3: Phương án này quan trọng hơn một chút so với phương án kia</li>
+                <li>5: Phương án này quan trọng hơn nhiều so với phương án kia</li>
+                <li>7: Phương án này quan trọng hơn rất nhiều so với phương án kia</li>
+                <li>9: Phương án này quan trọng hơn tuyệt đối so với phương án kia</li>
+                <li>2,4,6,8: Các mức độ trung gian</li>
+            </ul>
+        </div>
+
+        <div id="matrices-container">
+            <!-- Ma trận so sánh sẽ được thêm vào đây -->
+        </div>
+
+        <div class="text-center mt-4 mb-4">
+            <button id="calculate-all-btn" class="btn btn-primary">Tính toán kết quả cuối cùng</button>
+        </div>
+
+        <div id="final-results" class="final-results" style="display: none;">
+            <h2 class="text-center mb-3">Kết quả cuối cùng</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Trọng số các phương án</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="final-weights"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Kết quả kiểm tra tính nhất quán</h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="consistency-summary"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let criteriaWeights = [];
+        let alternatives = [];
+        let criteria = [];
+
+        function createMatrixTable(criterion, alternatives) {
+            const table = document.createElement('table');
+            table.className = 'matrix-table table table-bordered';
+            
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            headerRow.innerHTML = `<th>${criterion}</th>${alternatives.map(alt => `<th>${alt}</th>`).join('')}`;
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+            
+            const tbody = document.createElement('tbody');
+            alternatives.forEach((alt1, i) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `<th>${alt1}</th>${alternatives.map((alt2, j) => {
+                    if (i === j) return '<td><input type="number" class="form-control" value="1" readonly></td>';
+                    if (i < j) return '<td><input type="number" class="form-control matrix-input" min="0.11" max="9" step="0.1" required></td>';
+                    return '<td><input type="number" class="form-control" readonly></td>';
+                }).join('')}`;
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+            
+            return table;
+        }
+
+        function updateReciprocalValues(table) {
+            const inputs = table.querySelectorAll('.matrix-input');
+            inputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const value = parseFloat(this.value);
+                    if (value > 0) {
+                        const row = this.closest('tr');
+                        const rowIndex = Array.from(row.parentNode.children).indexOf(row);
+                        const colIndex = Array.from(row.children).indexOf(this.closest('td'));
+                        
+                        const reciprocalCell = table.querySelector(`tbody tr:nth-child(${colIndex + 1}) td:nth-child(${rowIndex + 2}) input`);
+                        reciprocalCell.value = (1 / value).toFixed(4);
+                    }
+                });
+            });
+        }
+
+        function createMatrixContainer(criterion, alternatives, index) {
+            const container = document.createElement('div');
+            container.className = 'matrix-container';
+            container.dataset.criterionIndex = index;
+            
+            const title = document.createElement('h3');
+            title.className = 'criterion-title';
+            title.textContent = `Ma trận so sánh cho tiêu chí: ${criterion} (Trọng số: ${(criteriaWeights[index] * 100).toFixed(2)}%)`;
+            container.appendChild(title);
+            
+            const table = createMatrixTable(criterion, alternatives);
+            container.appendChild(table);
+            updateReciprocalValues(table);
+            
+            const resultsDiv = document.createElement('div');
+            resultsDiv.className = 'results-container';
+            resultsDiv.innerHTML = `
+                <h4>Kết quả cho tiêu chí ${criterion}</h4>
+                <div class="weights"></div>
+                <div class="consistency"></div>
+            `;
+            container.appendChild(resultsDiv);
+            
+            return container;
+        }
+
+        function getMatrixData(container) {
+            const n = alternatives.length;
+            const matrix = Array(n).fill().map(() => Array(n).fill(1));
+            
+            const inputs = container.querySelectorAll('.matrix-input');
+            let inputIndex = 0;
+            
+            for (let i = 0; i < n; i++) {
+                for (let j = i + 1; j < n; j++) {
+                    const value = parseFloat(inputs[inputIndex].value);
+                    matrix[i][j] = value;
+                    matrix[j][i] = 1 / value;
+                    inputIndex++;
+                }
+            }
+            
+            return matrix;
+        }
+
+        async function calculateMatrixResults(container) {
+            const matrix = getMatrixData(container);
+            
+            try {
+                const response = await fetch('/calculate_ahp', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ matrix: matrix }),
+                });
+                
+                const result = await response.json();
+                
+                const weightsDiv = container.querySelector('.weights');
+                weightsDiv.innerHTML = `
+                    <h5>Trọng số:</h5>
+                    <ul>
+                        ${alternatives.map((alt, i) => `<li>${alt}: ${(result.weights[i] * 100).toFixed(2)}%</li>`).join('')}
+                    </ul>
+                `;
+                
+                const consistencyDiv = container.querySelector('.consistency');
+                consistencyDiv.innerHTML = `
+                    <h5>Kiểm tra tính nhất quán:</h5>
+                    <ul>
+                        <li>λmax: ${result.lambda_max.toFixed(4)}</li>
+                        <li>CI: ${result.ci.toFixed(4)}</li>
+                        <li>CR: ${result.cr.toFixed(4)}</li>
+                        <li>Kết luận: ${result.cr < 0.1 ? 
+                            '<span class="text-success">Nhất quán (CR < 0.1)</span>' : 
+                            '<span class="text-danger">Không nhất quán (CR >= 0.1)</span>'}</li>
+                    </ul>
+                `;
+                
+                return result;
+            } catch (error) {
+                console.error('Error:', error);
+                return null;
+            }
+        }
+
+        async function calculateFinalResults() {
+            const matrices = document.querySelectorAll('.matrix-container');
+            const results = [];
+            let allConsistent = true;
+            
+            for (const matrix of matrices) {
+                const result = await calculateMatrixResults(matrix);
+                if (result) {
+                    results.push(result);
+                    if (result.cr >= 0.1) {
+                        allConsistent = false;
+                    }
+                }
+            }
+            
+            if (!allConsistent) {
+                alert('Một số ma trận không đạt tính nhất quán (CR >= 0.1). Vui lòng kiểm tra lại các giá trị so sánh.');
+                return;
+            }
+            
+            const finalWeights = Array(alternatives.length).fill(0);
+            
+            for (let i = 0; i < alternatives.length; i++) {
+                for (let j = 0; j < criteria.length; j++) {
+                    finalWeights[i] += results[j].weights[i] * criteriaWeights[j];
+                }
+            }
+            
+            const finalResultsDiv = document.getElementById('final-results');
+            finalResultsDiv.style.display = 'block';
+            
+            const finalWeightsDiv = document.getElementById('final-weights');
+            const sortedAlternatives = alternatives
+                .map((alt, i) => ({ name: alt, weight: finalWeights[i] }))
+                .sort((a, b) => b.weight - a.weight);
+            
+            finalWeightsDiv.innerHTML = `
+                <h6>Xếp hạng các phương án:</h6>
+                <ol>
+                    ${sortedAlternatives.map(alt => 
+                        `<li>${alt.name}: ${(alt.weight * 100).toFixed(2)}%</li>`).join('')}
+                </ol>
+            `;
+            
+            const consistencySummaryDiv = document.getElementById('consistency-summary');
+            consistencySummaryDiv.innerHTML = `
+                <ul>
+                    ${results.map((result, i) => `
+                        <li>Tiêu chí "${criteria[i]}":
+                            <ul>
+                                <li>CR: ${result.cr.toFixed(4)}</li>
+                                <li>Kết luận: ${result.cr < 0.1 ? 
+                                    '<span class="text-success">Nhất quán</span>' : 
+                                    '<span class="text-danger">Không nhất quán</span>'}</li>
+                            </ul>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Lấy dữ liệu từ localStorage
+            criteriaWeights = JSON.parse(localStorage.getItem('criteriaWeights') || '[]');
+            alternatives = JSON.parse(localStorage.getItem('alternatives') || '[]');
+            criteria = JSON.parse(localStorage.getItem('criteria') || '[]');
+            
+            const matricesContainer = document.getElementById('matrices-container');
+            
+            criteria.forEach((criterion, index) => {
+                const matrixContainer = createMatrixContainer(criterion, alternatives, index);
+                matricesContainer.appendChild(matrixContainer);
+            });
+            
+            document.getElementById('calculate-all-btn').addEventListener('click', calculateFinalResults);
+        });
+    </script>
+</body>
+</html> 
