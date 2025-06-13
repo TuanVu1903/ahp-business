@@ -1,0 +1,8 @@
+include README.md
+include requirements.txt
+include runtime.txt
+include gunicorn_config.py
+include pyproject.toml
+recursive-include templates *
+recursive-include static *
+recursive-include fonts * 
