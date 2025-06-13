@@ -34,7 +34,7 @@ import html
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')  # Thêm secret key
+app.secret_key = 'ahp_decision_support_system_secret_key_2024'  # Cần thiết cho session
 
 # Kết nối MongoDB
 try:

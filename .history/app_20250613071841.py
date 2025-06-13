@@ -34,7 +34,7 @@ import html
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
-app.secret_key = os.getenv('SECRET_KEY', 'your-secret-key-here')  # Thêm secret key
+app.secret_key = 'ahp_decision_support_system_secret_key_2024'  # Cần thiết cho session
 
 # Kết nối MongoDB
 try:
@@ -822,11 +822,7 @@ def health_check():
 @app.route('/')
 def index():
     """Trang chính - yêu cầu đăng nhập"""
-    # Cho phép health check bỏ qua đăng nhập
-    if request.headers.get('User-Agent', '').startswith('Railway'):
-        return jsonify({"status": "healthy"}), 200
-        
-    # Kiểm tra đăng nhập cho các request thông thường
+    # Kiểm tra đăng nhập
     if not session.get('logged_in'):
         return redirect(url_for('login'))
     
