@@ -2,7 +2,11 @@ services:
   - type: web
     name: ahp-business
     env: python
-    buildCommand: pip install -r requirements.txt
+    region: singapore
+    buildCommand: |
+      python -m pip install --upgrade pip
+      pip install setuptools==69.0.2 wheel==0.42.0
+      pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
@@ -10,4 +14,7 @@ services:
       - key: PORT
         value: 8000
       - key: MONGODB_URI
-        sync: false 
+        sync: false
+      - key: POETRY_VERSION
+        value: none
+    autoDeploy: false 
